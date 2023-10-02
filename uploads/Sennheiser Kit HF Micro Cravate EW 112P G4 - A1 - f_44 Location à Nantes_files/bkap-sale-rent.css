@@ -1,0 +1,42 @@
+/*  Styling of Sale and Rent button on front end */
+
+.bkap_reset_dates:before {
+	display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f021";
+    margin-right: 0.5407911001em;
+}
+
+.booking_types-flex-child-mode-front {
+	padding:20px;
+}
+
+.payment_mode_div {
+	margin-top: 5%;
+	margin-bottom: 5%;
+	padding: 20px;
+}
+
+.payment_mode_div label {
+	font-weight: 400;
+    margin: 2%;
+    background-color: #e8c7bb; 
+    padding: 4% 10%;
+    cursor: pointer;
+    color: white;
+    display: inline !important;
+}
+
+.payment_mode_div label input[type="radio"]:checked {
+	background-color: black !important;
+	color: #fff;
+}
+
+.checked_mode {
+    background-color: #d26e4b !important;
+    
+}

@@ -37,9 +37,9 @@ class Materiel
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateAchat = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $image = null;
-
+    #[ORM\OneToOne(mappedBy:'id_materiel',targetEntity: Images::class)]
+    private ?Images $image = null;
+    
     #[ORM\OneToMany(mappedBy: 'id_materiel', targetEntity: Transactions::class)]
     private Collection $transactions;
 
@@ -137,18 +137,6 @@ class Materiel
         return $this;
     }
 
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): static
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Transactions>
      */
@@ -178,4 +166,14 @@ class Materiel
 
         return $this;
     }
+    public function getImage(): ?Images
+    {
+         return $this->image;
+    }
+        public function setImage(?Images $image): static
+    {
+        $this->image = $image;
+        return $this;
+    }
+
 }
