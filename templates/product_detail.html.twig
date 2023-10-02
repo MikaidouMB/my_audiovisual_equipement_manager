@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+    {% block body %}
+            <div class="container mt-5">
+                <div class="row">
+                    <!-- Image du produit -->
+                    <div class="col-md-6">
+                        <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+                    </div>
+                    <!-- Détails du produit -->
+                    <div class="col-md-6">
+                        <h2 id="productName">{{product.nom}}</h2>
+                        <h5 id="productType">{{product.type}}</h5>
+                        <h6 id="productBrand">{{product.marque}}</h6>
+                        <p id="productDescription">{{product.description}}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Prix de location par jour : <span id="productPrice">{{product.prixLocation}} €</span></li>
+                            <li class="list-group-item">Statut: <span id="productStatus">{{product.statut}}</span></li>
+                            <li class="list-group-item">Date d'achat: <span id="purchaseDate">{{product.dateAchat|format_datetime('short','none',locale='fr')}}</span></li>
+                        </ul>
+                        {% if product.statut == 'Disponible'%}
+                        <button class="btn btn-primary mt-3">Louer</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+    {% endblock %}
