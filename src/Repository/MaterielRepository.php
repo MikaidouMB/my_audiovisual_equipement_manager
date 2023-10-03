@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Materiel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -48,6 +50,18 @@ public function findProductByWord($keyword)
     // Obtenez la requête et exécutez-la
     $query = $qb->getQuery();
     return $query->getResult();
+}
+
+public function findProductByType($type)
+{
+    $qb = $this->createQueryBuilder('m');
+
+    $qb->select('m')
+       ->where('m.type = :type')
+       ->orderBy('m.dateAchat', 'ASC')
+       ->setParameter('type', $type);
+
+    return $qb->getQuery()->getResult();
 }
 
 

@@ -3,12 +3,14 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
+
         <!-- Header-->
         <div class="d-flex flex-column min-vh-100">
         <!-- Section-->
         <section class="py-5">
-    <div class="container px-4 px-lg-5 mt-5">
+    <div class="container-fluid">
         <div class="row gx-4 gx-lg-5 row-cols-4 justify-content-center">
+        
             {% for product in products %}
                 <div class="col mb-5">
                     <div class="card h-100">

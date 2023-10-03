@@ -48,7 +48,6 @@ class HomeController extends AbstractController
                 $data[] = [
                     'id' => $result->getId(),
                     'nom' => $result->getNom()
-                    // Add other fields as needed...
                 ];
             }
             $redirectUrl = $urlGenerator->generate('search_products_page', ['keyword' => $keyword]); 
@@ -68,6 +67,16 @@ class HomeController extends AbstractController
 
             ]);
         }
+        #[Route('/search_products/page/{type}', name: 'search_products_page')]
+        public function showProductByType(string $type, EntityManagerInterface $entityManager): Response
+        {
+            $products = $entityManager->getRepository(Materiel::class)->findProductByType($type);
+            return $this->render('search_result.html.twig', [
+                'results' => $products,
+                'type' => $type
+            ]);
+        }
         
+
 }
 
