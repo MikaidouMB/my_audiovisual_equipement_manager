@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ keyword }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-center">
+    <h1>Recherche<h1>
+    <p>{{results|length}} resultat{%if results|length > 1 %}s{% endif %} pour "{{ keyword }}"</p>
+    <div class="row">
+        {% for product in results %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if product.image.ref is defined %}
+                <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+                {% else %} 
+                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.nom }}</h5>
+                    <p class="card-text">{{ product.prixLocation }}€ par jour</p>
+                    <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

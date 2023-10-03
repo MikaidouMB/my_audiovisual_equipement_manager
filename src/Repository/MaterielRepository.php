@@ -36,6 +36,21 @@ class MaterielRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+public function findProductByWord($keyword)
+{
+    // Créez un générateur de requêtes (query builder) pour l'entité Materiel
+    $qb = $this->createQueryBuilder('m');
+
+    // Ajoutez une clause WHERE pour filtrer par un mot-clé (en supposant que vous souhaitez filtrer par un champ spécifique, ajustez 'nomChamp' en conséquence)
+    $qb->where($qb->expr()->like('m.nom', ':keyword'))
+       ->setParameter('keyword', '%' . $keyword . '%'); // Ajustez 'nomChamp' en fonction du nom du champ dans lequel vous souhaitez effectuer la recherche
+
+    // Obtenez la requête et exécutez-la
+    $query = $qb->getQuery();
+    return $query->getResult();
+}
+
+
 //    public function findOneBySomeField($value): ?Materiel
 //    {
 //        return $this->createQueryBuilder('m')
