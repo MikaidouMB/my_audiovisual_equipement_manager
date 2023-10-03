@@ -34,7 +34,6 @@ class HomeController extends AbstractController
         ]);
         }
 
-
         #[Route('/search_products/result', name: 'search_products_result')]
         public function showResultSearchProducts(Request $request, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): Response
         {
@@ -50,25 +49,24 @@ class HomeController extends AbstractController
                     'nom' => $result->getNom()
                 ];
             }
-            $redirectUrl = $urlGenerator->generate('search_products_page', ['keyword' => $keyword]); 
-
+            $redirectUrl = $urlGenerator->generate('search_products_keyword_page', ['keyword' => $keyword]); 
             return new JsonResponse(['redirectUrl' => $redirectUrl]);
-
-          
         }
-        #[Route('/search_products/page/{keyword}', name: 'search_products_page')]
+
+        #[Route('/search_products/page/{keyword}', name: 'search_products_keyword_page')]
         public function showSearchPage(string $keyword, EntityManagerInterface $entityManager): Response
         {
             $search_results = $entityManager->getRepository(Materiel::class)->findProductByWord($keyword);
-        
+
             return $this->render('search_result.html.twig', [
                 'results' => $search_results,
                 'keyword' => $keyword
 
             ]);
         }
-        #[Route('/search_products/page/{type}', name: 'search_products_page')]
-        public function showProductByType(string $type, EntityManagerInterface $entityManager): Response
+
+        #[Route('/search_products/page/type/{type?}', name: 'search_products_type_page')]
+        public function showProductByType(?string $type, EntityManagerInterface $entityManager): Response
         {
             $products = $entityManager->getRepository(Materiel::class)->findProductByType($type);
             return $this->render('search_result.html.twig', [
@@ -76,7 +74,6 @@ class HomeController extends AbstractController
                 'type' => $type
             ]);
         }
-        
 
 }
 

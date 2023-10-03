@@ -14,11 +14,11 @@ class Evaluations
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Materiel $id_materiel = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
+    private ?Materiel $materiel = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?User $id_utilisateur = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
+    private ?User $utilisateur = null;
 
     #[ORM\Column]
     private ?int $note = null;
@@ -33,24 +33,24 @@ class Evaluations
 
     public function getIdMateriel(): ?Materiel
     {
-        return $this->id_materiel;
+        return $this->materiel;
     }
 
-    public function setIdMateriel(?Materiel $id_materiel): static
+    public function setIdMateriel(?Materiel $materiel): static
     {
-        $this->id_materiel = $id_materiel;
+        $this->materiel = $materiel;
 
         return $this;
     }
 
-    public function getIdUtilisateur(): ?User
+    public function getUtilisateur(): ?User
     {
-        return $this->id_utilisateur;
+        return $this->utilisateur;
     }
 
-    public function setIdUtilisateur(?User $id_utilisateur): static
+    public function setUtilisateur(?User $utilisateur): static
     {
-        $this->id_utilisateur = $id_utilisateur;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
