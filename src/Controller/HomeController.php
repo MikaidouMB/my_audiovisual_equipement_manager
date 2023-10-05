@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HomeController extends AbstractController
 {
-        #[Route('/home', name: 'app_home')]
+        #[Route('/', name: 'app_home')]
         public function index(EntityManagerInterface $entityManager): Response
         {
         $products = $entityManager->getRepository(Materiel::class)->findAll();

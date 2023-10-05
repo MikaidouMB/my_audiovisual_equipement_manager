@@ -5,18 +5,30 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_home')}}">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_home')}}">Accueil</a></li>
                 <li class="nav-item"><a class="nav-link" href="#!">Service et prestations</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Vente</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#!">Nouveautés</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="#!">Contact</a></li>
                     </ul>
                 </li>
+                
+                {% if app.user %}
+                    <li class="nav-item"><a class="nav-link" href="{{path('app_logout')}}">Déconnexion</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{path('app_login')}}">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{path('app_register')}}">Inscription</a></li>
+                {% endif %}
+
             </ul>
+        
+
             <!-- Here's the container for search and cart -->
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mon compte</a>
+
                 <form class="d-flex">
                     <button class="btn btn-outline-dark" type="submit">
                         <i class="bi-cart-fill me-1"></i>
@@ -26,5 +38,4 @@
                 </form>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>

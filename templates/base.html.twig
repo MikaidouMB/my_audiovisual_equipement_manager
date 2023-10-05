@@ -12,8 +12,19 @@
         {% block javascripts %}
         {% endblock %}
     </head>
-    {% include('navbar.html.twig') %}
+        {% include "_partials/_navbar.html.twig" %}
+         {% if app.user and app.user.isVerified == false %}
+			<div class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				<div class="alert-message">
+					<strong>Votre compte n'est pas activé</strong>,
+                     <a href="{{ path('resend_verif') }}" class ="alert-link">renvoyer le lien d'activation</a>
+				</div>
+			</div>
+		{% endif %}
+		{% include "_partials/_flash.html.twig" %}
     <body class="d-flex flex-column min-vh-100">
+  
         <header class="bg-dark py-5">
                 <div class="container px-4 px-lg-5 my-5">
                     <div class="text-center text-white">
@@ -23,7 +34,6 @@
                         <input class="form-control mb-3" type="search" placeholder="Search" aria-label="Search">
                         <button id="ajax-button" class="btn btn-outline-warning my-2 my-sm-0 mt-5" type="submit">Recherche</button>
                     </form>
-                    
                     </div>
                 </div>
             </header>
@@ -40,6 +50,6 @@
         <!-- Core theme JS-->
         <script src="{{ asset('js/scripts.js') }}"></script>
     </body>
-    {{include('footer.html.twig')}}
+        {% include "_partials/_footer.html.twig" %}
 
 </html>

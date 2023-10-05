@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">S'inscrire</h3>
+                </div>
+                <div class="card-body">
+                    
+                   {{ form_start(registrationForm, {'attr': {'class': 'form'}}) }}
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.telephone, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.adresse, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.adresse, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <!-- Ajout des champs email et password -->
+                <div class="form-group">
+                    {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group mb-5 ">
+                    {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <!-- Ajout du bouton d'enregistrement -->
+                <button type="submit" class="btn btn-primary bg-dark ">Valider</button>
+
+        {{ form_end(registrationForm) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
