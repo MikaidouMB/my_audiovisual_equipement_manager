@@ -26,7 +26,7 @@ services:
     App\Service\SendEmail:
         arguments:
             $senderEmail: '%app.sender_email%'
-            $senderName: '%app.sender_name%'
+            $mailer: '@mailer' # ou l'ID de service de votre mailer
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

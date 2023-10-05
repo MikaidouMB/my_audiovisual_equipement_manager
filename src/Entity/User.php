@@ -174,6 +174,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isVerified;
     }
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $resetToken;
+
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
@@ -181,6 +184,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+    
     public function getRegistrationToken(): ?string
     {
         return $this->registrationToken;

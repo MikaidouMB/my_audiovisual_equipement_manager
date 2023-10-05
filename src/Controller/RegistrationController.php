@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -54,16 +53,13 @@ class RegistrationController extends AbstractController
 
         $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
 
-        $sendEmail->send([
-            'recipient_email' => $user->getEmail(),
-            'subject' => 'Verification de votre adresse email pour activer votre compte',
-            'html_template' => "emails/confirmation_email.html.twig",
-            'context' => [
-                'prenom' => $user->getPrenom(),
-                'userID' => $user->getId(),
-                'token' => $token,
-            ]
-        ]);
+        $sendEmail->send(
+            'no-reply@monsite.net',
+            $user->getEmail(),
+            'Activation de votre compte sur le site e-commerce',
+            'register',
+            compact('user', 'token')
+        );
 
         $this->addFlash('success', "Votre compte utilisateur a bien été créé, veuillez consulter vos emails pour l'activer");
 
