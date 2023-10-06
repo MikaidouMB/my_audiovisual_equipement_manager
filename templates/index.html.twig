@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}LocaMatos{% endblock %}
 
 {% block body %}
 
@@ -30,12 +30,20 @@
                         </div>
                         <!-- Product actions-->
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('product_detail', {'id': product.id}) }}">View options</a></div>
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('product_detail', {'id': product.id}) }}">Voir détails</a></div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
+        <div class="navigation d-flex justify-content-center mb-8">
+    {{ knp_pagination_render(products) }}
+</div>
+
+
     </div>
+ 
 </section>
+   
+
 {% endblock %}

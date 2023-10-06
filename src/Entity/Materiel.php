@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
 class Materiel
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,15 +38,18 @@ class Materiel
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateAchat = null;
 
-    #[ORM\OneToOne(mappedBy:'id_materiel',targetEntity: Images::class)]
+    #[ORM\OneToOne(mappedBy: 'materiel_id', targetEntity: Images::class, cascade: ['persist'])]
     private ?Images $image = null;
+    
     
     #[ORM\OneToMany(mappedBy: 'id_materiel', targetEntity: Transactions::class)]
     private Collection $transactions;
 
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -175,5 +179,7 @@ class Materiel
         $this->image = $image;
         return $this;
     }
+
+    
 
 }

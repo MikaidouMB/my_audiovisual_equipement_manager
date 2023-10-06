@@ -26,10 +26,10 @@ class Transactions
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
-    private ?Materiel $id_materiel = null;
+    private ?Materiel $materiel = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?User $id_utilisateur = null;
+    private ?User $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -86,24 +86,24 @@ class Transactions
 
     public function getIdMateriel(): ?Materiel
     {
-        return $this->id_materiel;
+        return $this->materiel;
     }
 
     public function setIdMateriel(?Materiel $id_materiel): static
     {
-        $this->id_materiel = $id_materiel;
+        $this->materiel = $id_materiel;
 
         return $this;
     }
 
     public function getIdUtilisateur(): ?User
     {
-        return $this->id_utilisateur;
+        return $this->utilisateur;
     }
 
     public function setIdUtilisateur(?User $id_utilisateur): static
     {
-        $this->id_utilisateur = $id_utilisateur;
+        $this->utilisateur = $id_utilisateur;
 
         return $this;
     }

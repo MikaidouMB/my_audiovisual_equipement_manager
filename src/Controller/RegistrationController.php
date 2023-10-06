@@ -6,8 +6,11 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Service\JWTService;
+use App\Service\PanierService;
 use App\Service\SendEmail;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Security\UsersAuthenticator;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,61 +19,68 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
+    private $panier;
+    public function __construct(PanierService $panier ) {
+        $this->panier = $panier;
+    }
     /**
      * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request,
-                         UserPasswordHasherInterface $userPasswordHasher,
-                         EntityManagerInterface $entityManager,
-                         SendEmail $sendEmail,
-                         JWTService $jwt
-): Response {
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, SendEmail $mail, JWTService $jwt): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
 
-    $user = new User();
-    $form = $this->createForm(RegistrationFormType::class, $user);
-    $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $user->setPassword($userPasswordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
+            $entityManager->persist($user);
+            $entityManager->flush();
+     
+            $header = [
+                'typ' => 'JWT',
+                'alg' => 'HS256'
+            ];
 
-        $entityManager->persist($user);
-        $entityManager->flush();
+            // On crée le Payload
+            $payload = [
+                'user_id' => $user->getId()
+            ];
 
-        $userId = $user->getId();
-        if (!$userId) {
-            throw new \Exception("L'ID de l'utilisateur n'a pas été défini après la sauvegarde.");
+            // On génère le token
+            $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+
+            // On envoie un mail
+            $mail->send(
+                'no-reply@monsite.net',
+                $user->getEmail(),
+                'Activation de votre compte sur le site e-commerce',
+                'register',
+                compact('user', 'token')
+            );
+
+            return $userAuthenticator->authenticateUser(
+                $user,
+                $authenticator,
+                $request
+            );
         }
 
-        $header = [
-            'typ' => 'JWT',
-            'alg' => 'HS256'
-        ];
+        return $this->render('registration/register.html.twig', [
+            'registrationForm' => $form->createView(),
+            'nbItemPanier' => $this->panier->getNbArticles()
 
-        $payload = [
-            'user_id' => $user->getId()
-        ];
-
-        $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
-
-        $sendEmail->send(
-            'no-reply@monsite.net',
-            $user->getEmail(),
-            'Activation de votre compte sur le site e-commerce',
-            'register',
-            compact('user', 'token')
-        );
-
-        $this->addFlash('success', "Votre compte utilisateur a bien été créé, veuillez consulter vos emails pour l'activer");
-
-        return $this->redirectToRoute('app_home');
+        ]);
     }
 
-    return $this->render('registration/register.html.twig', [
-
-        'registrationForm' => $form->createView(),
-    ]);
-}
 
 
     #[Route('/verify/{token}', name: 'app_verify_account', methods: ['GET'])]
@@ -100,6 +110,7 @@ class RegistrationController extends AbstractController
     public function resendVerif(JWTService $jwt, SendEmail $sendEmail, UserRepository $userRepository): Response
     {
         $user = $this->getUser();
+
         if(!$user){
             $this->addFlash('danger', 'Vous devez être connecté pour accéder à cette page');
             return $this->redirectToRoute('app_login');
@@ -120,17 +131,15 @@ class RegistrationController extends AbstractController
         ];
 
         $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+        $prenom = $user->getPrenom(); 
+        $sendEmail->send(
+            'no-reply@loca-matos.net',
+            $user->getEmail(),
+            'Activation de votre compte sur le site Loca-Matos',
+            'confirmation_email',
+            compact('user', 'token', 'prenom')
+        );
 
-        $sendEmail->send([
-            'recipient_email' => $user->getEmail(),
-            'subject' => 'Verification de votre adresse email pour activer votre compte',
-            'html_template' => "emails/confirmation_email.html.twig",
-            'context' => [
-                'prenom' => $user->getPrenom(),
-                'userID' => $user->getId(),
-                'token' => $token,
-            ]
-        ]);
         $this->addFlash('success', 'Email de vérification envoyé');
         return $this->redirectToRoute('app_login');
     }

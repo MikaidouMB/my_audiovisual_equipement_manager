@@ -1,49 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Materiel index{% endblock %}
+{% block title %}Liste de Matériels{% endblock %}
 
 {% block body %}
-    <h1>Materiel index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Marque</th>
-                <th>Description</th>
-                <th>PrixLocation</th>
-                <th>Statut</th>
-                <th>DateAchat</th>
-                <th>Image</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for materiel in materiels %}
-            <tr>
-                <td>{{ materiel.id }}</td>
-                <td>{{ materiel.nom }}</td>
-                <td>{{ materiel.type }}</td>
-                <td>{{ materiel.marque }}</td>
-                <td>{{ materiel.description }}</td>
-                <td>{{ materiel.prixLocation }}</td>
-                <td>{{ materiel.statut }}</td>
-                <td>{{ materiel.dateAchat ? materiel.dateAchat|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ materiel.image }}</td>
-                <td>
-                    <a href="{{ path('app_materiel_show', {'id': materiel.id}) }}">show</a>
-                    <a href="{{ path('app_materiel_edit', {'id': materiel.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<!-- Header-->
+<div class="d-flex flex-column min-vh-100">
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container-fluid">
+            <div class="row gx-4 gx-lg-5 row-cols-4 justify-content-center">
+                
+                {% for materiel in materiels %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            {% if materiel.image.ref is defined %}
+                        <img class="card-img-top" src="{{asset('img/'~ materiel.image.ref)}}" alt="..." />
+                     {% else %} 
+                        <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                    {%  endif %}
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ materiel.nom }}</h5>
+                                    <!-- Product price-->
+                                    {{ materiel.prixLocation }}€ par jour
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('admin_show', {'id': materiel.id}) }}">Détails</a></div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {# If you have pagination for 'materiels', you can render it here as you did for 'products' #}
+            <div class="navigation d-flex justify-content-center mb-8">
+                {{ knp_pagination_render(materiels) }}
+            </div>
+        </div>
+    </section>
+</div>
 
-    <a href="{{ path('app_materiel_new') }}">Create new</a>
 {% endblock %}

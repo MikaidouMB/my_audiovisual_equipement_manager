@@ -8,14 +8,17 @@
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_home')}}">Accueil</a></li>
                 <li class="nav-item"><a class="nav-link" href="#!">Service et prestations</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Vente</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#!">Nouveautés</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="#!">Contact</a></li>
                     </ul>
                 </li>
-                
+                {% if app.user and is_granted('ROLE_ADMIN') %}
+                    <div>
+                        <li class="nav-item"><a class="nav-link" href="{{path('admin_index')}}">Admin Dashboard</a></li>
+                    </div>
+                {% endif %}
                 {% if app.user %}
                     <li class="nav-item"><a class="nav-link" href="{{path('app_logout')}}">Déconnexion</a></li>
                 {% else %}
@@ -25,15 +28,13 @@
 
             </ul>
         
+                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mon compte</a>
 
-            <!-- Here's the container for search and cart -->
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mon compte</a>
-
-                <form class="d-flex">
+               <form class="d-flex" action="{{ path('cart_reservation') }}" method="get">
                     <button class="btn btn-outline-dark" type="submit">
                         <i class="bi-cart-fill me-1"></i>
-                        Cart
-                        <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                        Panier
+<span class="badge bg-dark text-white ms-1 rounded-pill">{{ nbItemPanier }}</span>
                     </button>
                 </form>
             </div>

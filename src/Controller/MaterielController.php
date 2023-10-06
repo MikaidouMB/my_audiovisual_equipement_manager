@@ -10,16 +10,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/materiel')]
 class MaterielController extends AbstractController
 {
     #[Route('/', name: 'app_materiel_index', methods: ['GET'])]
-    public function index(MaterielRepository $materielRepository): Response
+    public function index(MaterielRepository $materielRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        return $this->render('materiel/index.html.twig', [
-            'materiels' => $materielRepository->findAll(),
-        ]);
+        $query = $materielRepository->createQueryBuilder('m')->getQuery();
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+    );
+
+    return $this->render('materiel/index.html.twig', [
+        'materiels' => $pagination,
+    ]);
     }
 
     #[Route('/new', name: 'app_materiel_new', methods: ['GET', 'POST'])]

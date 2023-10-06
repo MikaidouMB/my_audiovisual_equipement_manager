@@ -27,3 +27,18 @@ body {
 .navbar .navbar-toggler {
     margin-right: 0;  /* reset margin to ensure center alignment */
 }
+
+.navigation {
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    padding: 10px 0;
+}
+
+.navigation .pagination a {
+    color: #007bff;
+}
+
+.navigation .pagination .active a {
+    background-color: #007bff;
+    color: #fff;
+}
