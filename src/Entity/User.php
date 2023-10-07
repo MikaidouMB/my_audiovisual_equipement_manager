@@ -45,12 +45,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private string $registrationToken;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isActive = false;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -174,8 +168,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isVerified;
     }
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $resetToken;
 
     public function setIsVerified(bool $isVerified): self
     {
@@ -184,37 +176,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getResetToken(): ?string
-    {
-        return $this->resetToken;
-    }
-
-    public function setResetToken(?string $resetToken): self
-    {
-        $this->resetToken = $resetToken;
-
-        return $this;
-    }
-    
-    public function getRegistrationToken(): ?string
-    {
-        return $this->registrationToken;
-    }
-
-    public function setRegistrationToken(?string $registrationToken): self
-    {
-        $this->registrationToken = $registrationToken;
-        return $this;
-    }
-
-    public function getIsActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
-        return $this;
-    }
 }

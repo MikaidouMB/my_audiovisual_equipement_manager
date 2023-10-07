@@ -1,56 +1,71 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Bienvenue!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {% block stylesheets %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<html lang="fr">
 
-        {% endblock %}
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-        {% include "_partials/_navbar.html.twig" %}
-         {% if app.user and app.user.isVerified == false %}
-			<div class="alert alert-warning alert-dismissible" role="alert">
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				<div class="alert-message">
-					<strong>Votre compte n'est pas activé</strong>,
-                     <a href="{{ path('resend_verif') }}" class ="alert-link">renvoyer le lien d'activation</a>
-				</div>
-			</div>
-		{% endif %}
-		{% include "_partials/_flash.html.twig" %}
-    <body class="d-flex flex-column min-vh-100">
-  
-        <header class="bg-dark py-5">
-                <div class="container px-4 px-lg-5 my-5">
-                    <div class="text-center text-white">
-                        <h1 class="display-4 fw-bolder">Un large choix de materiel audiovisuel</h1>
-                        <p class="lead fw-normal text-white-50 mb-3">With this shop hompeage template</p>
-                    <form class="form-inline mr-2">
-                        <input class="form-control mb-3" type="search" placeholder="Search" aria-label="Search">
-                        <button id="ajax-button" class="btn btn-outline-warning my-2 my-sm-0 mt-5" type="submit">Recherche</button>
-                    </form>
-                    </div>
-                </div>
-            </header>
-                {{include('navbar_types.html.twig')}}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bienvenue!{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    {% block stylesheets %}{% endblock %}
+</head>
 
-            <main class="flex-fill">
-            {% block body %}
-            {% endblock %}
-            </main>  
-            <!-- Include jQuery -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="{{ asset('js/scripts.js') }}"></script>
-    </body>
-        {% include "_partials/_footer.html.twig" %}
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navbar -->
+    {% include "_partials/_navbar.html.twig" %}
+
+    <!-- Alert for Account Verification -->
+    {% if app.user and app.user.isVerified == false %}
+    <div class="container mt-4">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Votre compte n'est pas activé</strong>,
+            <a href="{{ path('resend_verif') }}" class="alert-link">Cliquez ici pour renvoyer le lien d'activation</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Flash Messages -->
+    {% include "_partials/_flash.html.twig" %}
+
+    <!-- Header Section with Image Background -->
+   <header class="header-background py-5 bg-dark">
+    <div class="container px-4 px-lg-5 my-5 header">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">L'expérience audiovisuelle ultime vous attend. Découvrez notre sélection</h1>
+                <form class="form-inline mr-2">
+                    <input class="form-control mb-3" type="search" placeholder="Rechercher" aria-label="Rechercher">
+                    <button id="ajax-button" class="btn btn-outline-warning my-2 my-sm-0 mt-5" type="submit">Recherche</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    {% if currentRoute starts with 'admin_' %}
+        {{ include('_partials/_navbar_admin.html.twig') }}
+    {% else %}
+        {{ include('_partials/_navbar_types.html.twig') }}
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-fill container mt-5">
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include "_partials/_footer.html.twig" %}
+
+    <!-- Javascript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/scripts.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+</body>
 
 </html>

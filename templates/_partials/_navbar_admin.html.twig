@@ -1,0 +1,26 @@
+ <!-- Navbar pour l'espace admin -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark justify-content-center mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('admin_index') }}">Admin Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Devis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('admin_app_user_index')}}">Utilisateurs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Boutiques</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="">Evaluations</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

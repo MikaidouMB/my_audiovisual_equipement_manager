@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Materiel;
+use App\Entity\User;
 use App\Form\MaterielType;
+use App\Form\UserType;
+use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -11,8 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
+use App\Service\PanierService;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('admin', name: 'admin_')]
 class AdminController extends AbstractController
@@ -20,12 +23,15 @@ class AdminController extends AbstractController
     private $doctrine;
     private $entityManager;
     private $paginatorInterface;
+    private $panier;
 
-    public function __construct(ManagerRegistry $doctrine, EntityManagerInterface $entityManager, PaginatorInterface $paginatorInterface)
+    public function __construct(PanierService $panier, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, PaginatorInterface $paginatorInterface)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $entityManager;
         $this->paginatorInterface = $paginatorInterface;
+        $this->panier = $panier;
+
     }
 
     #[Route('/', name: 'index')]
@@ -37,11 +43,11 @@ class AdminController extends AbstractController
         $materiels = $this->paginatorInterface->paginate(
             $data,
             $request->query->getInt('page',1),
-            8,
+            11,
         );
 
-        return $this->render('materiel/index.html.twig', [
-            'materiels' => $materiels
+        return $this->render('admin/index.html.twig', [
+            'materiels' => $materiels,'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
     #[Route('/admin/{id}', name: 'show', methods: ["GET"])]
@@ -50,11 +56,33 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('materiel/show.html.twig', [
-            'materiel' => $materiel
+            'materiel' => $materiel,
+            'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
 
-    #[Route('/admin/{id}/edit', name: 'edit', methods: ["GET", "POST"])]
+    #[Route('/new', name: 'create_product', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $materiel = new Materiel();
+        $form = $this->createForm(MaterielType::class, $materiel);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($materiel);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_materiel_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('materiel/new.html.twig', [
+            'materiel' => $materiel,
+            'form' => $form,
+            'nbItemPanier' => $this->panier->getNbArticles()
+        ]);
+    }
+
+    #[Route('/admin/{id}/edit', name: 'edit_product', methods: ["GET", "POST"])]
     public function edit(Request $request, Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -65,16 +93,17 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->doctrine->getManager()->flush();
 
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('admin_index');
         }
 
         return $this->render('materiel/edit.html.twig', [
             'materiel' => $materiel,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
 
-    #[Route('/admin/{id}/delete', name: 'delete', methods: ["DELETE"])]
+    #[Route('/admin/{id}/delete', name: 'delete_product', methods: ["DELETE"])]
     public function delete(Request $request, Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -85,6 +114,95 @@ class AdminController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('admin_dashboard');
+        return $this->redirectToRoute('admin_index');
+    }
+
+    #[Route('/users', name: 'app_user_index', methods: ['GET'])]
+    public function indexUser(UserRepository $userRepository): Response
+    {
+        return $this->render('user/index.html.twig', [
+            'users' => $userRepository->findAll(),
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
+    public function showUser(User $user): Response
+    {
+        return $this->render('user/show.html.twig', [
+            'user' => $user,
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    public function editUser(Request $request, User $user,UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('password')->getData();
+            if ($plainPassword) {
+
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+            }
+            $entityManager->persist($user);
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form,
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+    #[Route('/create/user', name: 'app_user_new', methods: ['GET', 'POST'])]
+    public function newUser(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher ): Response
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+            return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('user/new.html.twig', [
+            'user' => $user,
+            'form' => $form,
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+
+
+    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    public function deleteUser(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }

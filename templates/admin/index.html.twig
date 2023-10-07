@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LocaMatos{% endblock %}
+
+{% block body %}
+
+<!-- Header-->
+<div class="d-flex flex-column min-vh-100">
+
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container-fluid">
+
+            {% if app.user and is_granted('ROLE_ADMIN') %}
+                <div class="mb-4">
+                    <a href="{{ path('admin_create_product') }}" class="btn btn-success">Ajouter un nouveau matériel</a>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                <div class="navigation d-flex justify-content-center mb-8">
+                    {{ knp_pagination_render(materiels) }}
+                </div>
+
+                        {% for product in materiels.items %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.nom }}</td>
+                                <td>{{ product.prixLocation }} €</td>
+                                <td>
+                                    {% if product.image.ref is defined %}
+                                        <img src="{{asset('img/'~ product.image.ref)}}" alt="{{ product.nom }}" width="50">
+                                    {% else %} 
+                                        <img src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" width="50">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('admin_edit_product', {'id': product.id}) }}" class="btn btn-primary btn-sm">Éditer</a>
+                                    <a href="{{ path('admin_delete_product', {'id': product.id}) }}" class="btn btn-danger btn-sm">Supprimer</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <div class="row gx-4 gx-lg-5 row-cols-4 justify-content-center">
+                    {% for product in materiels.items %}
+                        <div class="col mb-5">
+                            <div class="card h-100">
+                                {% if product.image.ref is defined %}
+                                    <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+                                {% else %} 
+                                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                                {% endif %}
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">{{ product.nom }}</h5>
+                                        <!-- Product price-->
+                                        {{ product.prixLocation }}€ par jour
+                                    </div>
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('product_detail', {'id': product.id}) }}">Voir détails</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    {% endfor %}
+                    
+                </div>
+
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

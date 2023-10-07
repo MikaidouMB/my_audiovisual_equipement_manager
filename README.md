@@ -4,10 +4,8 @@ MON COMPTE
 - Profil(historique commandes)
 
 PANIER
-- chiffre panier
 -reduire champs formulaire
--Aucun produit ! Ajoutez du matériel à votre panier pour continuer.
--Enlever jauge de nombre dans le détail ou transposer valeur vers panier (limite stock??)
+-limite stock??
 
 ACCUEIL
 -photo accueil
@@ -19,6 +17,8 @@ DETAIL PRODUITS
 BDD
 -ajout date de reservation en bdd
 -nombre d'éléments en reserve
+-date de creation dans materiel,user reservation,evaluation
+-creer une table type pour restreindre dans le form de crétion de materiel
 
 STYLE
 -remplir footer, mettre du texte dans serv et presta

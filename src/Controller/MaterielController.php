@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Materiel;
 use App\Form\MaterielType;
 use App\Repository\MaterielRepository;
+use App\Service\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,9 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
+
 #[Route('/materiel')]
 class MaterielController extends AbstractController
 {
+    private $panier;
+
+    public function __construct(PanierService $panier ) {
+        $this->panier = $panier;
+    }
     #[Route('/', name: 'app_materiel_index', methods: ['GET'])]
     public function index(MaterielRepository $materielRepository, PaginatorInterface $paginator, Request $request): Response
     {
@@ -26,34 +33,17 @@ class MaterielController extends AbstractController
 
     return $this->render('materiel/index.html.twig', [
         'materiels' => $pagination,
+        'nbItemPanier' => $this->panier->getNbArticles()
     ]);
     }
 
-    #[Route('/new', name: 'app_materiel_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $materiel = new Materiel();
-        $form = $this->createForm(MaterielType::class, $materiel);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($materiel);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_materiel_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('materiel/new.html.twig', [
-            'materiel' => $materiel,
-            'form' => $form,
-        ]);
-    }
-
+    
     #[Route('/{id}', name: 'app_materiel_show', methods: ['GET'])]
     public function show(Materiel $materiel): Response
     {
         return $this->render('materiel/show.html.twig', [
             'materiel' => $materiel,
+            'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
 
@@ -72,6 +62,7 @@ class MaterielController extends AbstractController
         return $this->render('materiel/edit.html.twig', [
             'materiel' => $materiel,
             'form' => $form,
+            'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
 

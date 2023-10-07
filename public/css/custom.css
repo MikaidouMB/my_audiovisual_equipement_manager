@@ -1,6 +1,7 @@
 .navbar-dark .navbar-nav .nav-link:hover {
     color: gold;
 }
+
 * {
     box-sizing: border-box;
 }
@@ -25,7 +26,7 @@ body {
 
 .navbar .navbar-brand,
 .navbar .navbar-toggler {
-    margin-right: 0;  /* reset margin to ensure center alignment */
+    margin-right: 0;
 }
 
 .navigation {
@@ -41,4 +42,96 @@ body {
 .navigation .pagination .active a {
     background-color: #007bff;
     color: #fff;
+}
+
+.header-background {
+    background: url('../img/mastere_production_audiovisuelle_cinema_iesa_arts_culture_2.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.header .text-center {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Ajout d'une ombre portée pour améliorer la lisibilité */
+    letter-spacing: 1px;  /* Espacement des lettres */
+    line-height: 1.5;  /* Hauteur de ligne pour une meilleure lisibilité */
+}
+
+header.bg-dark::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+header.bg-dark {
+    position: relative;
+}
+
+.header-background .lead {
+    font-size: 1.5rem; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+    color: #ffffff; 
+}
+
+/* Styles pour la navbar */
+.navbar {
+    font-family: 'Arial', sans-serif;  
+    background-color: #343a40;  
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: #ffffff;  
+}
+
+.navbar-brand:hover, .navbar-nav .nav-link:hover {
+    color: #f8c20e; 
+}
+
+.navbar-toggler-icon {
+    filter: brightness(10);  
+}
+
+.btn.btn-outline-dark {
+    background-color: #343a40;  /* une couleur de fond sombre pour le bouton */
+    color: #ffffff;  /* couleur de texte claire */
+}
+
+.btn.btn-outline-dark:hover {
+    background-color: #f8c20e;  /* une couleur de fond d'accent pour le survol */
+    color: #343a40;  /* couleur de texte sombre pour le survol */
+}
+
+
+.btn-outline-dark:hover {
+    background-color: #f8c20e;
+    border-color: #f8c20e;
+    color: #343a40;
+}
+.navbar .dropdown-menu {
+    border-radius: 0;  /* Bords carrés pour le menu déroulant */
+    border: none;      /* Supprimer la bordure par défaut */
+    background-color: #454d55; /* Un peu plus clair que la navbar */
+}
+
+.navbar .dropdown-item {
+    color: #ffffff;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: #f8c20e;
+    color: #343a40;
+}
+.navbar .bi-cart-fill {
+    font-size: 1.3rem;  /* Augmente la taille de l'icône */
+}
+
+.navbar .badge {
+    position: relative;
+    top: -10px;        /* Déplace le badge vers le haut */
+    right: -10px;      /* Déplace le badge vers la droite */
 }
