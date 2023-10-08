@@ -69,7 +69,6 @@
         <th>Ville</th>
         <th>Code Postal</th>
         <th>Action</th>
-        <!-- Ajoutez d'autres colonnes selon vos besoins -->
     </tr>
 </thead>
 
@@ -86,7 +85,9 @@
             <td>{{ reservation.adresse }}</td>
             <td>{{ reservation.ville }}</td>
             <td>{{ reservation.codePostal }}</td>
-            <td><a href="{{ path('admin_app_user_orders', {'id': user.id}) }}" class="btn btn-info">Voir les commandes</a></td> <!-- Ajoutez d'autres colonnes ici -->
+            <td>
+                <a href="{{ path('admin_app_user_order_details', {'id': user.id, 'orderId': reservation.id}) }}" class="btn btn-primary">Voir les détails</a>
+            </td>
         </tr>
     {% endfor %}
 </tbody>

@@ -6,8 +6,10 @@ use App\Entity\Materiel;
 use App\Entity\User;
 use App\Form\BoutiqueType;
 use App\Entity\Boutique;
+use App\Entity\Reservation;
 use App\Form\MaterielType;
 use App\Form\UserType;
+use App\Repository\ReservationRepository;
 use App\Repository\BoutiqueRepository;
 use App\Repository\UserRepository;
 use App\Service\ReservationMaterielService;
@@ -39,7 +41,6 @@ class AdminController extends AbstractController
         $this->paginatorInterface = $paginatorInterface;
         $this->panier = $panier;
         $this->reservationMaterielService = $reservationMaterielService;
-
     }
 
     #[Route('/', name: 'index')]
@@ -205,7 +206,7 @@ class AdminController extends AbstractController
     
 
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function showUser(User $user): Response
+    public function showUser($id,User $user): Response
     {
         return $this->render('user/show.html.twig', [
             'user' => $user,
@@ -214,36 +215,41 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route("/user/{id}/orders", name: "app_user_orders")]
-    public function orders(User $user,EntityManagerInterface $entityManager,ReservationMaterielService $reservationMaterielService)
+   
+    #[Route("/user/{id}/order/{orderId}", name: "app_user_order_details")]
+    public function orderDetails($id, int $orderId, ReservationMaterielService $reservationMaterielService)
     {
-        // Récupérez les réservations de l'utilisateur
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
+        $materielNames = [];
+        $materielPrix = [];
+    
+        foreach ($materiels as $materiel) {
+            $materielNames[$materiel->getId()] = $materiel->getNom();
+            $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
+        }
+    
         $reservations = $user->getReservations();
-        // Récupérer
-        $reservationId = 7;
-        //dd($reservations);
-        $materielId = 3;
-        // Créez un tableau pour stocker les résultats de getOrders pour chaque réservation
-        $orders = [];
-
-        // Parcourez les réservations
+        $orderDetails = [];
+        $totalPrices = [];
+    
         foreach ($reservations as $reservation) {
-        $reservationId = $reservation->getId();
+            $reservationId = $reservation->getId();
+            $orderDetails[$reservationId] = $this->reservationMaterielService->getOrderDetails($reservationId);
+            $totalPrices[$reservationId] = $reservation->getPrixTotal();
+        }
     
-        // Obtenez le materielId correspondant à cette réservation depuis votre modèle de données
-        //$materielId = $reservation->getMaterielId(); // Remplacez cela par le code réel pour obtenir le materielId
-    
-        // Appelez getOrders avec les valeurs correspondantes
-        $orders[$reservationId] = $this->reservationMaterielService->getOrders($reservationId, $materielId);
-        //dd($orders);
-    }
-        return $this->render('user/orders.html.twig', [
+        return $this->render('admin/order_details.html.twig', [
             'user' => $user,
-            'reservations' => $reservations,
+            'orderDetails' => $orderDetails[$orderId],
+            'materielNames' => $materielNames,
             'nbItemPanier' => $this->panier->getNbArticles(),
-            'orders' => $orders
+            'materielPrix' => $materielPrix,
+            'prixTotal' => $totalPrices[$orderId] 
         ]);
     }
+    
+
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function editUser(Request $request, User $user,UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {

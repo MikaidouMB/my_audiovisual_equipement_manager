@@ -45,7 +45,6 @@ class CartController extends AbstractController
         
         $panier = $session->get("panier", []);
         $total = 0;
-        ///dd($user->getId());
 
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($panier as $itemId => $item) {
@@ -59,7 +58,6 @@ class CartController extends AbstractController
         
                 if ($materiel) {
                     $reservation->addMateriel($materiel);
-                    
                 }
         
                 $reservation->setPrixTotal($total);

@@ -19,9 +19,8 @@ DETAIL PRODUITS
 - evaluations sur les product details
 
 BDD
--ajout date de reservation en bdd
 -nombre d'éléments en reserve
--creer une table type pour restreindre dans le form de crétion de materiel
+-creer une table type pour restreindre dans le form de création de materiel
 -table adresse relié au id user
 
 STYLE
