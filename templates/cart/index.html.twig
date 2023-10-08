@@ -62,7 +62,7 @@
         <span id="total-price-{{ item.product.id }}">{{ item.product.prixLocation * item.quantity }}</span> €
     </td>
     <td>
-        <a href="{{ path('cart_add', {id: item.product.id}) }}" class="btn btn-success"><i class="bi bi-cart-plus"></i></a>
+        <a href="{{ path('cart_add', {id: item.product.id, current_url: app.request.uri }) }}" class="btn btn-success"><i class="bi bi-cart-plus"></i></a>
         <a href="{{ path('cart_remove', {id: item.product.id}) }}" class="btn btn-warning"><i class="bi bi-cart-dash"></i></a>
         <a href="{{ path('cart_delete', {id: item.product.id}) }}" class="btn btn-danger"><i class="bi bi-cart-x"></i></a>
     </td>

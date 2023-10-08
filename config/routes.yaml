@@ -3,3 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+# config/routes.yaml
+admin_boutiques:
+    path: /admin/boutiques
+    controller: 'App\Controller\AdminController::boutiques'
+    methods: ['GET']

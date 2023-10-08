@@ -75,8 +75,8 @@ class HomeController extends AbstractController
 
             return $this->render('search_result.html.twig', [
                 'results' => $search_results,
-                'keyword' => $keyword
-
+                'keyword' => $keyword,
+                'nbItemPanier' => $this->panier->getNbArticles()
             ]);
         }
 

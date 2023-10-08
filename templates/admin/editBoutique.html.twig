@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une boutique{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modifier la boutique: {{ boutique.nom }}</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.adresse) }}
+            {{ form_row(form.code_postal) }}
+            {{ form_row(form.ville) }}
+            {{ form_row(form.telephone) }}
+            {{ form_row(form.email) }}
+
+            <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        {{ form_end(form) }}
+
+        <div class="mt-3">
+            <a href="{{ path('admin_shops') }}" class="btn btn-secondary">Retour à la liste des boutiques</a>
+        </div>
+    </div>
+{% endblock %}

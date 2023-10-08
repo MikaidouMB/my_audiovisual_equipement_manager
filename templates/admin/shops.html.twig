@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Boutiques{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Liste des Boutiques</h1>
+
+        <div class="row">
+            {% for boutique in boutiques %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            {{ boutique.nom }}
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-map-marker-alt"></i> {{ boutique.adresse }}, {{ boutique.codePostal }}, {{ boutique.ville }}</li>
+                            <li class="list-group-item"><i class="fas fa-phone"></i> {{ boutique.telephone }}</li>
+                            <li class="list-group-item"><i class="fas fa-envelope"></i> {{ boutique.email }}</li>
+                        </ul>
+                        <div class="card-footer">
+                            <a href="{{ path('admin_edit_boutique', { 'id': boutique.id }) }}" class="btn btn-sm btn-warning">Modifier</a>
+                            
+                            <!-- Formulaire de suppression -->
+                            <form method="post" action="{{ path('admin_delete_boutique', { 'id': boutique.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette boutique ?');" style="display:inline-block;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ boutique.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('admin_create_boutique') }}" class="btn btn-primary">Créer une nouvelle boutique</a>
+        </div>
+    </div>
+{% endblock %}

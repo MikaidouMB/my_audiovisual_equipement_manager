@@ -6,6 +6,7 @@ use App\Entity\Materiel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,7 +46,8 @@ public function findProductByWord($keyword)
 
     // Ajoutez une clause WHERE pour filtrer par un mot-clé (en supposant que vous souhaitez filtrer par un champ spécifique, ajustez 'nomChamp' en conséquence)
     $qb->where($qb->expr()->like('m.nom', ':keyword'))
-       ->setParameter('keyword', '%' . $keyword . '%'); // Ajustez 'nomChamp' en fonction du nom du champ dans lequel vous souhaitez effectuer la recherche
+    ->orWhere($qb->expr()->like('m.type', ':keyword'))
+    ->setParameter('keyword', '%' . $keyword . '%'); // Ajustez 'nomChamp' en fonction du nom du champ dans lequel vous souhaitez effectuer la recherche
 
     // Obtenez la requête et exécutez-la
     $query = $qb->getQuery();

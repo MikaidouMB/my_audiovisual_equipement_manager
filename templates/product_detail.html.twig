@@ -17,11 +17,8 @@
                         <li class="list-group-item">Statut: <span id="productStatus">{{product.statut}}</span></li>
                         <li class="list-group-item">Date d'achat: <span id="purchaseDate">{{product.dateAchat|format_datetime('short','none',locale='fr')}}</span></li>
                     </ul>
-{{dump()}}
                     {% if product.statut == 'Disponible'%}                      
-
-                        <!-- Boutons -->
-                        <a href="{{ path('cart_add', {id: product.id})}}" class="btn btn-success mt-3">Ajouter au panier</a>
+                    <a href="{{ path('cart_add', {id: product.id, current_url: app.request.uri }) }}" class="btn btn-success mt-3">Ajouter au panier</a>
                     {% endif %}
                 </div>
             </div>

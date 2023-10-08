@@ -9,6 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NotificationsRepository::class)]
 class Notifications
 {
+    public function __construct() 
+        {
+            $this->createdAt = new \DateTimeImmutable();
+        }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,6 +30,9 @@ class Notifications
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?User $id_utilisateur = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -75,6 +83,18 @@ class Notifications
     public function setIdUtilisateur(?User $id_utilisateur): static
     {
         $this->id_utilisateur = $id_utilisateur;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

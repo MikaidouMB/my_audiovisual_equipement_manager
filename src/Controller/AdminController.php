@@ -4,9 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Materiel;
 use App\Entity\User;
+use App\Form\BoutiqueType;
+use App\Entity\Boutique;
 use App\Form\MaterielType;
 use App\Form\UserType;
+use App\Repository\BoutiqueRepository;
 use App\Repository\UserRepository;
+use App\Service\ReservationMaterielService;
 use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\PanierService;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('admin', name: 'admin_')]
@@ -24,13 +29,16 @@ class AdminController extends AbstractController
     private $entityManager;
     private $paginatorInterface;
     private $panier;
+    private $reservationMaterielService;
 
-    public function __construct(PanierService $panier, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, PaginatorInterface $paginatorInterface)
+    public function __construct(PanierService $panier, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,
+     PaginatorInterface $paginatorInterface, ReservationMaterielService $reservationMaterielService)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $entityManager;
         $this->paginatorInterface = $paginatorInterface;
         $this->panier = $panier;
+        $this->reservationMaterielService = $reservationMaterielService;
 
     }
 
@@ -103,7 +111,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/{id}/delete', name: 'delete_product', methods: ["DELETE"])]
+    #[Route('/admin/{id}/delete', name: 'delete_product', methods: ["POST"])]
     public function delete(Request $request, Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -126,6 +134,76 @@ class AdminController extends AbstractController
 
         ]);
     }
+
+    #[Route('/shops', name: 'shops',methods: ['GET'])]
+    public function boutiques(BoutiqueRepository $boutiqueRepository): Response
+    {
+
+        return $this->render('admin/shops.html.twig', [
+            'boutiques' => $boutiqueRepository->findAll(),
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+
+    #[Route('/create-boutique', name: 'create_boutique')]
+    public function createBoutique(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $boutique = new Boutique();
+        $form = $this->createForm(BoutiqueType::class, $boutique);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($boutique);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Boutique created successfully!');
+
+            return $this->redirectToRoute('admin_shops');
+        }
+
+        return $this->render('admin/create_boutique.html.twig', [
+            'form' => $form->createView(),
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+
+    #[Route('/admin/boutique/{id}/edit', name: 'edit_boutique')]
+    public function editShop(Request $request, Boutique $boutique, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(BoutiqueType::class, $boutique);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('admin_shops'); // ou tout autre nom de route
+        }
+
+        return $this->render('admin/editBoutique.html.twig', [
+            'boutique' => $boutique,
+            'form' => $form->createView(),
+            'nbItemPanier' => $this->panier->getNbArticles()
+        ]);
+    }
+
+    #[Route('/boutique/{id}/delete', name: 'delete_boutique', methods: ['POST'])]
+    public function deleteShop(Request $request, Boutique $boutique): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if ($this->isCsrfTokenValid('delete'.$boutique->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->doctrine->getManager();
+            $entityManager->remove($boutique);
+            $entityManager->flush();
+        }
+    
+        return $this->redirectToRoute('admin_shops');
+    }
+    
+
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function showUser(User $user): Response
     {
@@ -133,6 +211,37 @@ class AdminController extends AbstractController
             'user' => $user,
             'nbItemPanier' => $this->panier->getNbArticles()
 
+        ]);
+    }
+
+    #[Route("/user/{id}/orders", name: "app_user_orders")]
+    public function orders(User $user,EntityManagerInterface $entityManager,ReservationMaterielService $reservationMaterielService)
+    {
+        // Récupérez les réservations de l'utilisateur
+        $reservations = $user->getReservations();
+        // Récupérer
+        $reservationId = 7;
+        //dd($reservations);
+        $materielId = 3;
+        // Créez un tableau pour stocker les résultats de getOrders pour chaque réservation
+        $orders = [];
+
+        // Parcourez les réservations
+        foreach ($reservations as $reservation) {
+        $reservationId = $reservation->getId();
+    
+        // Obtenez le materielId correspondant à cette réservation depuis votre modèle de données
+        //$materielId = $reservation->getMaterielId(); // Remplacez cela par le code réel pour obtenir le materielId
+    
+        // Appelez getOrders avec les valeurs correspondantes
+        $orders[$reservationId] = $this->reservationMaterielService->getOrders($reservationId, $materielId);
+        //dd($orders);
+    }
+        return $this->render('user/orders.html.twig', [
+            'user' => $user,
+            'reservations' => $reservations,
+            'nbItemPanier' => $this->panier->getNbArticles(),
+            'orders' => $orders
         ]);
     }
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
@@ -194,7 +303,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function deleteUser(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
@@ -205,4 +313,5 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

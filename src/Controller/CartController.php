@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\ReservationMateriel;
+use \Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/cart', name: 'cart_')]
 class CartController extends AbstractController
@@ -25,50 +25,73 @@ class CartController extends AbstractController
         $this->panier = $panier;
     }
 
-    #[Route('/reservation', name: 'reservation')]    
+    #[Route('/reservation', name: 'reservation')]
     public function reservationAndSubmit(
         Request $request, 
         EntityManagerInterface $entityManager,
         SessionInterface $session, 
         MaterielRepository $productsRepository,
         BoutiqueRepository $boutiqueRepository,
-        PanierService $panier
+        PanierService $panier,
+        Security $security
     ): Response {
         $boutiques = $boutiqueRepository->findAll();
         
         $reservation = new Reservation();
+        $user = $security->getUser();
         
         $form = $this->createForm(ReservationFormType::class, $reservation);
         $form->handleRequest($request);
         
         $panier = $session->get("panier", []);
         $total = 0;
-    
+        ///dd($user->getId());
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $reservation->setPrixTotal($total);
-            
-            $entityManager->persist($reservation);
-    
-            // Parcourez le panier et ajoutez chaque produit à la réservationCommande
             foreach ($panier as $itemId => $item) {
+                $materielId = $itemId;
                 $product = $item['product'];
                 $quantity = $item['quantity'];
+        
                 $total = $item['total'];
-    
-                // Insérez uniquement l'ID de la réservation et l'ID du matériel
-                $reservationMateriel = new ReservationMateriel();
-                $reservationMateriel->setReservation($reservation); // Assurez-vous que cette relation est correctement définie dans votre entité ReservationMateriel
-                $reservationMateriel->setMateriel($product); // Assurez-vous que cette relation est correctement définie dans votre entité ReservationMateriel
-    
-                $entityManager->persist($reservationMateriel);
+                $materielId = $itemId; 
+                $materiel = $entityManager->getRepository(Materiel::class)->find($materielId);
+        
+                if ($materiel) {
+                    $reservation->addMateriel($materiel);
+                    
+                }
+        
+                $reservation->setPrixTotal($total);
+                $reservation->setUser($user);
             }
-    
+
+            // Persistez d'abord la réservation pour générer l'ID
+            $entityManager->persist($reservation);
             $entityManager->flush();
+        
+            // Récupérez l'ID de la réservation (maintenant il a été généré)
+            $reservationId = $reservation->getId();
+            // Exécutez la requête SQL brute après avoir obtenu l'ID de la réservation
+            $sql = "UPDATE reservation_materiel SET quantity = :quantity WHERE reservation_id = :reservationId AND materiel_id = :materielId";
+            $entityManager->getConnection()->executeQuery($sql, [
+                'quantity' => $quantity,
+                'reservationId' => $reservationId,
+                'materielId' => $materielId,
+            ]);
+            $sql = "UPDATE reservation_materiel SET user_id = :userId WHERE reservation_id = :reservationId AND materiel_id = :materielId";
+            $entityManager->getConnection()->executeQuery($sql, [
+                'reservationId' => $reservationId,
+                'materielId' => $materielId,
+                'userId' => $user->getId()
+            ]);
+            //dd('Requête SQL exécutée avec succès');
+
             $this->addFlash('success', "Votre demande a bien été envoyée. Nous la traiterons dès que possible.");
-    
+        
             // Effacez le panier après la soumission
             $session->remove('panier');
-          
+        
             return $this->redirectToRoute('app_home');
         }
     
@@ -83,9 +106,8 @@ class CartController extends AbstractController
         ]);
     }
     
-    
     #[Route('/add/{id}', name: 'add')]
-    public function addToCart($id, Materiel $product, SessionInterface $session)
+    public function addToCart($id, Materiel $product, SessionInterface $session, Request $request)
     {
         if (!$product) {
             $this->addFlash('error', 'Produit introuvable.');
@@ -112,8 +134,8 @@ class CartController extends AbstractController
         $session->set("panier", $panier);
 
         $this->addFlash('success', 'Produit ajouté au panier avec succès!');
-        
-        return $this->redirectToRoute('cart_reservation');
+        $currentUrl = $request->get('current_url');
+        return $this->redirect($currentUrl);
     }
 
 

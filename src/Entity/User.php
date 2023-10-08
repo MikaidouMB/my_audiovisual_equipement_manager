@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -44,6 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "user")]
+    private $reservations;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -175,5 +183,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function __construct() 
+        {
+            $this->createdAt = new \DateTimeImmutable();
+            $this->reservations = new ArrayCollection();
+        }
 
+        public function getReservations(): Collection
+        {
+            return $this->reservations;
+        }
+
+        public function getCreatedAt(): ?\DateTimeImmutable
+        {
+            return $this->createdAt;
+        }
+
+        public function setCreatedAt(\DateTimeImmutable $createdAt): static
+        {
+            $this->createdAt = $createdAt;
+
+            return $this;
+        }
 }

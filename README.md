@@ -3,6 +3,10 @@ things to do
 MON COMPTE
 - Profil(historique commandes)
 
+SéCURITé
+-routes Admin non sécurisées  
+
+
 PANIER
 -reduire champs formulaire
 -limite stock??
@@ -17,8 +21,8 @@ DETAIL PRODUITS
 BDD
 -ajout date de reservation en bdd
 -nombre d'éléments en reserve
--date de creation dans materiel,user reservation,evaluation
 -creer une table type pour restreindre dans le form de crétion de materiel
+-table adresse relié au id user
 
 STYLE
 -remplir footer, mettre du texte dans serv et presta
@@ -26,3 +30,5 @@ STYLE
 -LOGO
 - notification 
 -mettre en prod
+
+

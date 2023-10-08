@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ImagesRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ImagesRepository::class)]
@@ -15,10 +13,10 @@ class Images
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Materiel::class, inversedBy: 'images')]
-    #[ORM\JoinColumn(name: 'materiel_id', referencedColumnName: 'id')]
-    private ?Materiel $materiel_id = null;
-    
+    #[ORM\OneToOne(targetEntity: Materiel::class, inversedBy: 'image')]
+    #[ORM\JoinColumn(name: "materiel_id", referencedColumnName: "id")]
+    private ?Materiel $materiel = null;
+
     
     #[ORM\Column(length: 255)]
     private ?string $ref = null;
@@ -30,12 +28,12 @@ class Images
 
     public function getMateriel(): ?Materiel
     {
-        return $this->materiel_id;
+        return $this->materiel; 
     }
 
     public function setMateriel(?Materiel $materiel): static
     {
-        $this->materiel_id = $materiel;
+        $this->materiel = $materiel; 
 
         return $this;
     }
