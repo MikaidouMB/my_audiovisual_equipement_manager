@@ -1,17 +1,36 @@
-{% extends 'base.html.twig' %}
-
 {% block title %}Devis N° D2023-{{ reservation.id }}{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
+
+<style>
+    .header, .footer, .info-section, .table-section {
+        margin-bottom: 50px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="header">
 <div class="row">
-<div class="col-md-6 text-right">
-            <img src="{{ asset('img/logo.jpg') }}" alt="Logo de l'entreprise" style="max-width: 150px;">
-        </div>
-        <div class="col-md-12 text-center">
-            <h1>Devis N° D2023-{{ reservation.id }}</h1>
-        </div>
-     </div>   
+
+   <div class="col-md-6 text-right">
+        <img class="logo" src="{{ absolute_url(asset('img/logo.jpg')) }}" alt="Logo de l'entreprise">
+    </div>
+    <h1>Devis N° D2023-{{ reservation.id }}</h1>
+    </div>
 </div>
    
     </div>
@@ -19,7 +38,7 @@
     <div class="row mt-3">
         <div>Date d'émission: {{ "now"|date("d/m/Y") }}</div>
         <div>Date d'échéance: {{ "now"|date_modify('+1 month')|date("d/m/Y") }}</div>
-    </div>
+    </div><br>
     
 <div class="row mt-4 mb-5">
     <div class="col-md-6 text-right"> 
@@ -27,14 +46,14 @@
         Adresse de l'entreprise <br>
         Code Postal - Ville de l'entreprise <br>
         Téléphone / Email / Site Internet de l'entreprise
-    </div>
+    </div><br>
     <div class="col-md-6">
         {{ reservation.prenom }} {{ reservation.nom }} <br>
         {{ reservation.adresse }} <br>
         {{ reservation.codePostal }} - {{ reservation.ville }} <br>
         {{ reservation.email }}
     </div>
-</div>
+</div><br>
     
     <table class="table table-bordered mt-3 mb-5">
         <thead class="bg-light">
@@ -74,7 +93,7 @@
                 <td>{{ (totalHT + totalTVA)|number_format(2, ',', ' ') }} €</td>
             </tr>
         </tfoot>
-    </table>
+    </table><br>
     
     <h4>Conditions de paiement</h4>
 
@@ -88,19 +107,6 @@
     <p>RCS Nantes n° XXX XXX XXX - Numéro de TVA: XXX</p>
     <p>Assurance: XXX</p>
 
-</div>
-<div class="row mt-5">
-<div class="col-md-6 text-center">
-    {% if reservation.IsValidated() %}
-        <a href="{{path('admin_devis_invalidate', {'id': reservation.user.id, 'orderId': reservation.id})}}" class="btn btn-danger">Invalider le devis</a>
-    {% else %}
-        <a href="{{path('admin_devis_is_validated', {'id': reservation.user.id, 'orderId': reservation.id})}}" class="btn btn-primary">Valider le devis</a>
-    {% endif %}
-</div>
-
-    <div class="col-md-6 text-center">
-        <a href="{{path('admin_devis.pdf', {'id': reservation.user.id, 'orderId': reservation.id})}}" class="btn btn-primary">Générer un pdf</a>
-    </div>
 </div>
 
 {% endblock %}

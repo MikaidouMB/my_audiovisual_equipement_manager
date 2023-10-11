@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\PanierService;
+use App\Service\PdfService;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('admin', name: 'admin_')]
@@ -336,7 +338,6 @@ class AdminController extends AbstractController
         $user = $this->entityManager->getRepository(User::class)->find($id);
         $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
         $reservation = $this->entityManager->getRepository(Reservation::class)->find($orderId);
-        //dd($reservation);
 
         $materielNames = [];
         $materielPrix = [];
@@ -345,23 +346,13 @@ class AdminController extends AbstractController
             $materielNames[$materiel->getId()] = $materiel->getNom();
             $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
         }
-    
-        $reservations = $user->getReservations();
-        $orderDetails = [];
-        $totalPrices = [];
-    
-        
-           // $orderDetails[$reservationId] = $this->reservationMaterielService->getOrderDetails($orderId);
-        
-        dump($orderId);
+
         return $this->render('admin/devis_detail.html.twig', [
             'user' => $user,
             'reservation'=> $reservation,
-            //'orderDetails' => $orderDetails[$orderId],
             'materielNames' => $materielNames,
             'nbItemPanier' => $this->panier->getNbArticles(),
             'materielPrix' => $materielPrix,
-           // 'prixTotal' => $totalPrices[$orderId] 
         ]);
     }
 
@@ -382,13 +373,12 @@ class AdminController extends AbstractController
         if ($reservation->IsValidated()) {
             $this->addFlash('success', 'Le devis a été validé.');
             
-            // Assuming you want to send an email when the quote is validated
             $sendEmail->send(
                 'Vistason@domain.com',
-                $reservation->getUser()->getEmail(),  // Assuming you have a getUser() method
+                $reservation->getUser()->getEmail(),  
                 'Votre devis a été validé',
-                'confirmation_devis',  // Nom du template Twig pour votre email
-                ['reservation' => $reservation]  // Variables pour le template
+                'confirmation_devis',  
+                ['reservation' => $reservation],
             );
         } else {
             $this->addFlash('info', 'Le devis n’a pas encore été validé.');
@@ -398,7 +388,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/details/devis/{id}/{orderId}/invalidate', name: 'devis_invalidate', methods: ['GET'])]
-    public function invalidateDevis($id, int $orderId, SendEmail $sendEmail, EntityManagerInterface $entityManager)
+    public function invalidateDevis($id, int $orderId, EntityManagerInterface $entityManager)
     {
         $reservation = $entityManager->getRepository(Reservation::class)->find($orderId);
     
@@ -407,7 +397,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_app_devis_list'); 
         }
 
-        $reservation->setIsValidated(0); // Ici, nous dévalidons le devis
+        $reservation->setIsValidated(0);
         $entityManager->persist($reservation);
         $entityManager->flush();
 
@@ -420,4 +410,32 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('admin_app_devis_list'); 
     }
+
+    #[Route('/pdf/{id}/{orderId}', name: 'devis.pdf', methods: ['GET'])]
+    public function generatePdfDevis($id, $orderId, Reservation $reservation = null, PdfService $pdf, EntityManagerInterface $entityManager)
+    {
+        $reservation = $entityManager->getRepository(Reservation::class)->find($orderId);
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
+        $reservation = $this->entityManager->getRepository(Reservation::class)->find($orderId);
+
+        $materielNames = [];
+        $materielPrix = [];
+    
+        foreach ($materiels as $materiel) {
+            $materielNames[$materiel->getId()] = $materiel->getNom();
+            $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
+        }
+    
+        $html = $this->renderView('admin/order_pdf.html.twig', [
+            'reservation' => $reservation,
+            'nbItemPanier' => $this->panier->getNbArticles(),
+            'user' => $user,
+            'materielNames' => $materielNames,
+            'nbItemPanier' => $this->panier->getNbArticles(),
+            'materielPrix' => $materielPrix,
+    ]);
+        $pdf->showPdfFile($html);
+    }
+
 }
