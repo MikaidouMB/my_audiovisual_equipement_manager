@@ -21,21 +21,20 @@ class EvaluationsRepository extends ServiceEntityRepository
         parent::__construct($registry, Evaluations::class);
     }
 
-//    /**
-//     * @return Evaluations[] Returns an array of Evaluations objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
+ /**
+     * @return Evaluations[] Returns an array of Evaluations objects
+     */
+    public function findRateByMateriel($id): array
+   {
+       return $this->createQueryBuilder('e')
+           ->Where('e.materiel = :materiel')
+            ->setParameter('materiel', $id)
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
 //    public function findOneBySomeField($value): ?Evaluations
 //    {
 //        return $this->createQueryBuilder('e')

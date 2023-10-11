@@ -1,42 +1,65 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-        <div class="container mt-5">
-            <div class="row">
-                <!-- Image du produit -->
-                <div class="col-md-6">
-                    <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
-                </div>
-                <!-- Détails du produit -->
-                <div class="col-md-6">
-                    <h2 id="productName">{{product.nom}}</h2>
-                    <h5 id="productType">{{product.type}}</h5>
-                    <h6 id="productBrand">{{product.marque}}</h6>
-                    <p id="productDescription">{{product.description}}</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Prix de location par jour : <span id="productPrice">{{product.prixLocation}} €</span></li>
-                        <li class="list-group-item">Statut: <span id="productStatus">{{product.statut}}</span></li>
-                        <li class="list-group-item">Date d'achat: <span id="purchaseDate">{{product.dateAchat|format_datetime('short','none',locale='fr')}}</span></li>
-                    </ul>
-                    {% if product.statut == 'Disponible'%}                      
-                    <a href="{{ path('cart_add', {id: product.id, current_url: app.request.uri }) }}" class="btn btn-success mt-3">Ajouter au panier</a>
-                    {% endif %}
-                </div>
+<div class="container mt-5">
+    <div class="row">
+        <!-- Image du produit -->
+        <div class="col-md-6">
+            <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+        </div>
+        <!-- Détails du produit -->
+        <div class="col-md-6">
+            <h2 id="productName">{{product.nom}}</h2>
+            <h5 id="productType">{{product.type}}</h5>
+            <h6 id="productBrand">{{product.marque}}</h6>
+            <p id="productDescription">{{product.description}}</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Prix de location par jour : <span id="productPrice">{{product.prixLocation}} €</span></li>
+                <li class="list-group-item">Statut: <span id="productStatus">{{product.statut}}</span></li>
+                <li class="list-group-item">Date d'achat: <span id="purchaseDate">{{product.dateAchat|format_datetime('short','none',locale='fr')}}</span></li>
+            </ul>
+          {% if product.statut == 'Disponible' %}
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="{{ path('cart_add', {id: product.id, current_url: app.request.uri }) }}" class="btn btn-success mt-3">Ajouter au panier</a>
+            {% else %}
+                <p>Veuillez <a href="{{ path('app_register') }}">vous inscrire</a> ou <a href="{{ path('app_login') }}">vous connecter</a> pour ajouter ce produit au panier.</p>
+            {% endif %}
+        {% endif %}
+
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <h3>Commentaires des utilisateurs</h3>
+    <div class="comments-section">
+        {% for evaluation in evaluations %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>{{ evaluation.utilisateur.email }}</strong>
+                <span class="float-right comment-date">{{ evaluation.createdAt|date('d/m/Y') }}</span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ evaluation.commentaire }}</p>
             </div>
         </div>
+        {% else %}
+        <p>Aucun commentaire pour ce produit pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
-    <script>
-        function incrementQuantity() {
-            let quantityInput = document.getElementById("quantity");
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-        }
+<script>
+    function incrementQuantity() {
+        let quantityInput = document.getElementById("quantity");
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    }
 
-        function decrementQuantity() {
-            let quantityInput = document.getElementById("quantity");
-            if (parseInt(quantityInput.value) > 1) {
-                quantityInput.value = parseInt(quantityInput.value) - 1;
-            }
+    function decrementQuantity() {
+        let quantityInput = document.getElementById("quantity");
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
         }
-    </script>
+    }
+</script>
 {% endblock %}

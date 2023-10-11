@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la commande{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Détails de la commande de {{ user.prenom }}</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Matériel</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set reservationTotal = 0 %}
+            {% for detail in orderDetails %}
+                {% set itemTotal = materielPrix[detail.materiel_id] * detail.quantity %}
+                {% set reservationTotal = reservationTotal + itemTotal %}
+                <tr>
+                    <td>{{ detail.reservation_id }}</td>
+                    <td>{{ materielNames[detail.materiel_id] }}</td>
+                    <td>{{ detail.quantity }}</td>
+                    <td>{{ materielPrix[detail.materiel_id]|default('Non spécifié') }} €</td>
+                    <td>{{ itemTotal|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-right"><strong>Total de la commande:</strong></td>
+                <td><strong>{{ reservationTotal|number_format(2, ',', ' ') }} €</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <a href="{{ path('user_order_history', {'id': user.id}) }}" class="btn btn-primary">Retour à la liste des commandes</a>
+</div>
+{% endblock %}

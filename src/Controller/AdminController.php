@@ -6,6 +6,7 @@ use App\Entity\Materiel;
 use App\Entity\User;
 use App\Form\BoutiqueType;
 use App\Entity\Boutique;
+use App\Entity\Evaluations;
 use App\Entity\Reservation;
 use App\Form\MaterielType;
 use App\Form\UserType;
@@ -96,24 +97,42 @@ class AdminController extends AbstractController
     public function edit(Request $request, Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
+    
+        // Récupérer une référence à l'image actuelle
+        $oldImage = $materiel->getImage();
+    
         $form = $this->createForm(MaterielType::class, $materiel);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->doctrine->getManager()->flush();
-
+            // Après la soumission du formulaire, on récupère la nouvelle image, si elle est différente de l'ancienne
+            $newImage = $materiel->getImage();
+    
+            $entityManager = $this->doctrine->getManager();
+    
+            if ($newImage && $oldImage && $newImage !== $oldImage) {
+                // Si une nouvelle image a été fournie et qu'elle est différente de l'ancienne, on la définit pour le matériel
+                $materiel->setImage($newImage);
+                $newImage->setMateriel($materiel);
+    
+                // Supprimer l'ancienne image de la base de données
+                $entityManager->remove($oldImage);
+            }
+    
+            $entityManager->flush();
+    
             return $this->redirectToRoute('admin_index');
         }
-
-        return $this->render('materiel/edit.html.twig', [
+    
+        return $this->render('admin/editMateriel.html.twig', [
             'materiel' => $materiel,
             'form' => $form->createView(),
             'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
+    
 
-    #[Route('/admin/{id}/delete', name: 'delete_product', methods: ["POST"])]
+    #[Route('/materiel/{id}/delete', name: 'delete_product', methods: ["POST"])]
     public function delete(Request $request, Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -274,7 +293,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('user/edit.html.twig', [
+        return $this->render('admin/edit.html.twig', [
             'user' => $user,
             'form' => $form,
             'nbItemPanier' => $this->panier->getNbArticles()
@@ -332,6 +351,7 @@ class AdminController extends AbstractController
 
         ]);
     }
+
     #[Route('/details/devis/{id}/{orderId}', name: 'app_devis_details', methods: ['GET'])]
     public function showDevis($id, int $orderId, ReservationMaterielService $reservationMaterielService)
     {
@@ -438,4 +458,15 @@ class AdminController extends AbstractController
         $pdf->showPdfFile($html);
     }
 
+  #[Route('/list/evaluation', name: 'app_evaluations_list', methods: ['GET'])]
+    public function listEvaluations()
+    {
+        $evaluations = $this->entityManager->getRepository(Evaluations::class)->findAll();
+
+        return $this->render('admin/rates.html.twig', [
+            'evaluations' => $evaluations,
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
 }

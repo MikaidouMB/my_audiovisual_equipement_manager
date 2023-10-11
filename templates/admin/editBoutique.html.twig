@@ -3,22 +3,49 @@
 {% block title %}Modifier une boutique{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Modifier la boutique: {{ boutique.nom }}</h1>
+    <div class="container my-5">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="mb-0">Modifier la boutique: {{ boutique.nom }}</h2>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
 
-        {{ form_start(form) }}
-            {{ form_row(form.nom) }}
-            {{ form_row(form.adresse) }}
-            {{ form_row(form.code_postal) }}
-            {{ form_row(form.ville) }}
-            {{ form_row(form.telephone) }}
-            {{ form_row(form.email) }}
+                    <div class="mb-3">
+                        {{ form_label(form.adresse, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+                    </div>
 
-            <button type="submit" class="btn btn-primary">Sauvegarder</button>
-        {{ form_end(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.code_postal, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.code_postal, {'attr': {'class': 'form-control'}}) }}
+                    </div>
 
-        <div class="mt-3">
-            <a href="{{ path('admin_shops') }}" class="btn btn-secondary">Retour à la liste des boutiques</a>
+                    <div class="mb-3">
+                        {{ form_label(form.ville, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.telephone, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                        <a href="{{ path('admin_shops') }}" class="btn btn-secondary ms-2">Retour à la liste des boutiques</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
         </div>
     </div>
 {% endblock %}

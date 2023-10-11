@@ -2,31 +2,38 @@
 
 {% block body %}
 <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
 
-    <h2>ÉTAPE 1 - DATE DE RÉSERVATION</h2>
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Réservation</h3>
+                </div>
+                <div class="card-body">
+                    
+                    {{ form_start(reservationForm, {'attr': {'class': 'form'}}) }}
 
-    {{ form_start(reservationForm) }}
-    
-    <div class="mb-3">
-        {{ form_label(reservationForm.boutique, 'Choix de la boutique *') }}
-        {{ form_widget(reservationForm.boutique) }}
-        {{ form_errors(reservationForm.boutique) }}
-    </div>
+                    <h5>ÉTAPE 1 - DATE DE RÉSERVATION</h5>
+                    <div class="form-group">
+                        {{ form_label(reservationForm.boutique, 'Choix de la boutique *', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(reservationForm.boutique, {'attr': {'class': 'form-control'}}) }}
+                    </div>
 
-  <div class="mb-3">
-    {{ form_label(reservationForm.dateRetrait, 'Date de retrait du matériel *') }}
-    {{ form_widget(reservationForm.dateRetrait, {'id': 'date-retrait'}) }}
-    {{ form_errors(reservationForm.dateRetrait) }}
-</div>
+                    <div class="form-group">
+                        {{ form_label(reservationForm.dateRetrait, 'Date de retrait du matériel *', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(reservationForm.dateRetrait, {'attr': {'class': 'form-control', 'id': 'date-retrait'}}) }}
+                    </div>
 
-<div class="mb-3">
-    {{ form_label(reservationForm.dateRetour, 'Date de retour du matériel *') }}
-    {{ form_widget(reservationForm.dateRetour, {'id': 'date-retour'}) }}
-    {{ form_errors(reservationForm.dateRetour) }}
-</div>
+                    <div class="form-group">
+                        {{ form_label(reservationForm.dateRetour, 'Date de retour du matériel *', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(reservationForm.dateRetour, {'attr': {'class': 'form-control', 'id': 'date-retour'}}) }}
+                    </div>
 
 
-<!-- ETAPE 2 : BON DE COMMANDE -->
 <h2 class="mt-4">ÉTAPE 2 - BON DE COMMANDE</h2>
 
 <table class="table table-bordered table-striped">

@@ -1,7 +1,27 @@
-<!-- Navigation-->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid px-4 px-lg-5">
-        <a class="navbar-brand" href="{{path('app_home')}}">LocaMatos</a>
+   <style>
+
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow to navbar */
+        }
+
+        /* Link styling */
+        .navbar-nav .nav-link {
+            padding: 12px 20px;  /* Increase padding */
+            border-radius: 25px; /* More rounded corners */
+            font-weight: bold;   /* Bold font for emphasis */
+            transition: transform 0.3s; /* Add transform for hover effect */
+        }
+
+        .navbar-nav .nav-link:hover {
+            transform: scale(1.05); /* Slightly scale up on hover */
+        }
+
+
+</style>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid px-4 px-lg-5"
+        <a class="navbar-brand" href="{{path('app_home')}}"><img src="/img/logo.jpg" alt="Logo Vistason" height="80">
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -21,14 +41,16 @@
                 {% endif %}
                 {% if app.user %}
                     <li class="nav-item"><a class="nav-link" href="{{path('app_logout')}}">Déconnexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{path('user_home')}}">Mon compte</a></li>
+
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{{path('app_login')}}">Connexion</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{path('app_register')}}">Inscription</a></li>
+
                 {% endif %}
 
             </ul>
         
-                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mon compte</a>
 
                <form class="d-flex" action="{{ path('cart_reservation') }}" method="get">
                     <button class="btn btn-outline-dark" type="submit">

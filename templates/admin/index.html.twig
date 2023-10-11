@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}LocaMatos{% endblock %}
+{% block title %}Vistason{% endblock %}
 
 {% block body %}
 
@@ -27,9 +27,6 @@
                     </thead>
                     <tbody>
 
-                <div class="navigation d-flex justify-content-center mb-8">
-                    {{ knp_pagination_render(materiels) }}
-                </div>
 
                         {% for product in materiels.items %}
                             <tr>
@@ -38,14 +35,17 @@
                                 <td>{{ product.prixLocation }} €</td>
                                 <td>
                                     {% if product.image.ref is defined %}
-                                        <img src="{{asset('img/'~ product.image.ref)}}" alt="{{ product.nom }}" width="50">
+                                        <img src="{{asset('img/'~ product.image.ref)}}" alt="{{ product.nom }}" width="100">
                                     {% else %} 
                                         <img src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" width="50">
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <form action="{{ path('admin_delete_product', {'id': product.id}) }}" method="post">
                                     <a href="{{ path('admin_edit_product', {'id': product.id}) }}" class="btn btn-primary btn-sm">Éditer</a>
-                                    <a href="{{ path('admin_delete_product', {'id': product.id}) }}" class="btn btn-danger btn-sm">Supprimer</a>
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
                                 </td>
                             </tr>
                         {% endfor %}

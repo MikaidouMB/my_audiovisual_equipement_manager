@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des évaluations{% endblock %}
+
+{% block body %}
+    <h1>Liste des évaluations</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID du matériel</th>
+                <th>ID de l'utilisateur</th>
+                <th>Commentaire</th>
+                <th>Date de création</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evaluation in evaluations %}
+                <tr>
+                    <td>{{ evaluation.id }}</td>
+                    <td>{{ evaluation.Idmateriel.nom }}</td>
+                    <td>{{ evaluation.utilisateur.prenom }}</td>
+                    <td>{{ evaluation.commentaire }}</td>
+                    <td>{{ evaluation.createdAt|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container mt-5 text-center">
-    <h1>Recherche<h1>
+    <h1>Recherche</h1>
     <p>{{results|length}} resultat{% if results|length > 1 %}s{% endif %} pour
          {% if keyword is defined %}"{{ keyword|default('unspecified keyword') }}" {% else %} " {{ type }} " {% endif %}
     </p>
@@ -13,11 +13,12 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 {% if product.image.ref is defined %}
-                <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+
+                    <img class="card-img-top" src="{{asset('img/'~ product.image.ref) | imagine_filter('my_thumb_3') }}" alt="{{ product.nom }}" />
                 {% else %} 
-                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image indisponible" />
                 {% endif %}
-                <div class="card-body">
+                <div class="card-body text-center"> <!-- centrage du texte -->
                     <h5 class="card-title">{{ product.nom }}</h5>
                     <p class="card-text">{{ product.prixLocation }}€ par jour</p>
                     <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn btn-primary">Voir détails</a>

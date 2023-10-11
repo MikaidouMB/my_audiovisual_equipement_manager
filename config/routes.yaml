@@ -8,3 +8,6 @@ admin_boutiques:
     path: /admin/boutiques
     controller: 'App\Controller\AdminController::boutiques'
     methods: ['GET']
+    # app/config/route/liip_imagine.yml
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.yaml"

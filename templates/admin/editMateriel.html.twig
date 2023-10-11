@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            {% for flash_error in app.flashes('edit_materiel_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+
+            <div class="card border-0 shadow">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Éditer le matériel</h3>
+                </div>
+                <div class="card-body">
+
+                   {{ form_start(form, {'attr': {'class': 'form'}}) }}
+
+                   <!-- Basic Information Group -->
+                   <h4>Informations de base</h4>
+                   <div class="mb-3">
+                       {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <div class="mb-3">
+                       {{ form_label(form.type, 'Type', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <div class="mb-3">
+                       {{ form_label(form.marque, 'Marque', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.marque, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <!-- Description & Price Group -->
+                   <h4>Description & Prix</h4>
+                   <div class="mb-3">
+                       {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <div class="mb-3">
+                       {{ form_label(form.prixLocation, 'Prix de location', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.prixLocation, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <!-- Additional Information Group -->
+                   <h4>Informations supplémentaires</h4>
+                   <div class="mb-3">
+                       {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <div class="mb-3">
+                       {{ form_label(form.dateAchat, 'Date d\'achat', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.dateAchat, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <div class="mb-3">
+                       {{ form_label(form.image, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+                       {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                   </div>
+
+                   <button type="submit" class="btn btn-dark mt-3">Mettre à jour</button>
+
+                   {{ form_rest(form) }}
+                   {{ form_end(form) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

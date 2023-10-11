@@ -22,21 +22,6 @@ class UserType extends AbstractType
                 'required' => true,
                 'attr' => ['placeholder' => 'Entrez l\'adresse email'],
             ])
-            ->add('roles', ChoiceType::class, [
-                'label' => 'Rôles',
-                'multiple' => true,
-                'expanded' => true, 
-                'choices' => [
-                    'Utilisateur' => 'ROLE_USER',
-                    'Admin' => 'ROLE_ADMIN',
-                ],
-            ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'required' => false,
-                'mapped' => false, // Important !
-                'attr' => ['placeholder' => 'Entrez le mot de passe'],
-            ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
                 'required' => true,
@@ -56,18 +41,44 @@ class UserType extends AbstractType
                 'label' => 'Adresse',
                 'required' => true,
                 'attr' => ['placeholder' => 'Entrez l\'adresse'],
-            ])
-            ->add('isVerified', CheckboxType::class, [
+            ]);
+            
+        if ($options['roles_check']) {
+            $builder->add('roles', ChoiceType::class, [
+                'required' => false,
+                'label' => 'Rôles',
+                'multiple' => true,
+                'expanded' => true, 
+                'choices' => [
+                    'Utilisateur' => 'ROLE_USER',
+                    'Admin' => 'ROLE_ADMIN',
+                ]
+            ]);
+        }
+        
+        $builder->add('password', PasswordType::class, [
+            'label' => 'Mot de passe',
+            'required' => false,
+            'mapped' => false, // Important !
+            'attr' => ['placeholder' => 'Entrez le mot de passe'],
+        ]);
+    
+        if ($options['show_isVerified']) {
+            $builder->add('isVerified', CheckboxType::class, [
                 'label' => 'Est vérifié',
                 'required' => false,
-            ])
-        ;
+            ]);
+        }
     }
+    
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'show_isVerified' => true,
+            'roles_check' => true,
+
         ]);
     }
 }

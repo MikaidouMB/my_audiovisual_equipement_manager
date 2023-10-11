@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %}Historique des commandes{% endblock %}
+
+{% block body %}
+        {{ include('_partials/navbar_profile.html.twig') }}
+
+<h2 class="mt-5">Dernières réservations</h2>
+<table class="table">
+   <thead>
+    <tr>
+        <th>ID</th>
+        <th>Date de commande</th>
+        <th>Boutique</th>
+        <th>Date de retrait</th>
+        <th>Date de retour</th>
+        <th>Société</th>
+        <th>Numéro TVA</th>
+        <th>Adresse</th>
+        <th>Ville</th>
+        <th>Code Postal</th>
+        <th>Action</th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for reservation in user.reservations %}
+        <tr>
+            <td>{{ reservation.id }}</td>
+            <td>{{ reservation.createdAt|date('d/m/Y H:i:s') }}</td>
+            <td>{{ reservation.boutique.nom }}</td>
+            <td>{{ reservation.dateRetrait|date('d/m/Y') }}</td>
+            <td>{{ reservation.dateRetour|date('d/m/Y') }}</td>
+            <td>{{ reservation.societe }}</td>
+            <td>{{ reservation.numeroTVA }}</td>
+            <td>{{ reservation.adresse }}</td>
+            <td>{{ reservation.ville }}</td>
+            <td>{{ reservation.codePostal }}</td>
+            <td>
+                <a href="{{ path('user_order_details', {'id': user.id, 'orderId': reservation.id}) }}" class="btn btn-primary">Voir les détails</a>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

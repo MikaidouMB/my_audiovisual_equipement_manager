@@ -2,7 +2,6 @@
 things to do
 
 MON COMPTE
-- Profil(historique commandes)
 
 SéCURITé
 -routes Admin non sécurisées  
@@ -13,7 +12,6 @@ PANIER
 
 ACCUEIL
 -photo accueil
-- photo sur les elements
 
 DETAIL PRODUITS
 - evaluations sur les product details
@@ -25,10 +23,8 @@ BDD
 
 STYLE
 -remplir footer,
--changer la vue admin pour que l'on fasse la difference
 -LOGO
 -Ameliorer navabar
--REdimensionner les photo (bundle)
 
 
 - notification 

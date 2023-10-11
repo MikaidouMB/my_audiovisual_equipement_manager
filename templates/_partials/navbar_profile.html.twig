@@ -1,0 +1,34 @@
+   <style>
+
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow to navbar */
+        }
+
+        /* Link styling */
+        .navbar-nav .nav-link {
+            padding: 12px 20px;  /* Increase padding */
+            border-radius: 25px; /* More rounded corners */
+            font-weight: bold;   /* Bold font for emphasis */
+            transition: transform 0.3s; /* Add transform for hover effect */
+        }
+
+        .navbar-nav .nav-link:hover {
+            transform: scale(1.05); /* Slightly scale up on hover */
+        }
+
+
+    </style>
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="{{ path('user_home') }}">Profil</a>
+            <a class="nav-item nav-link" href="{{ path('user_profile_edit', {'id': app.user.id}) }}">Editer profil</a>
+            <a class="nav-item nav-link" href="{{path('user_order_history', {'id': app.user.id}) }}">Commandes</a>
+            <a class="nav-item nav-link" href="{{path('user_reviews', {'id': app.user.id}) }}">Avis</a>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,25 @@
+# app/config/packages/liip_imagine.yaml
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+        cache: ~
+
+        # the name of the "filter set"
+        my_thumb_3:
+
+            # adjust the image quality to 100%
+            quality: 100
+
+            # list of transformations to apply (the "filters")
+            filters:
+
+                # create a thumbnail: set size to 300x200 and use the "inset" mode
+                thumbnail: { size: [300, 200], mode: inset }
+
+                # create a 2px black border: center the thumbnail on a black background
+                # that is 304x204 (2px larger on each side) to create a 2px border around the final image
+                background: { size: [304, 204], position: center, color: '#000000' }

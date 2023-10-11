@@ -16,7 +16,8 @@
                     <h3 class="card-title">{{ step }}</h3>
                     <p class="card-text mb-auto">
                         {% if loop.index == 1 %}
-                        Un système de recherche intuitif utilisant la géolocalisation vous permet de trouver rapidement le matériel dont vous avez besoin, même à la dernière minute ! Une liste matérielle importante ? <br><a href="#">Contactez-nous</a> !
+                        Un système de recherche intuitif utilisant la géolocalisation vous permet de trouver rapidement le matériel dont vous avez besoin, même à la dernière minute ! Une liste matérielle importante ? <br>
+                        <a href="mailto:vistason@domaine.com?subject=Sujet de l'e-mail&body=Bonjour, je souhaite discuter avec l'équipe...">Contactez-nous !  </a>
                         {% elseif loop.index == 2 %}
                         Échange instantané avec les meilleurs loueurs proches de vous, devis en ligne, tarification transparente et automatisation des contrats. Vous n’aurez jamais loué aussi simplement.
                         {% elseif loop.index == 3 %}
@@ -31,7 +32,7 @@
 </div>
 
 <div class="section">
-    <a href="{{path('app_register')}}" class="btn btn-primary bg-dark mx-auto d-block">Créer mon compte gratuitement</a>
+    <a href="{{path('app_register')}}" class="btn btn bg-dark text-white mx-auto d-block">Créer mon compte gratuitement</a>
 </div>
 
 <div class="section">
@@ -53,7 +54,7 @@
 </div>
 
 <div class="section">
-    <h2 class="text-center mt-5">Ils louent du matériel sur LocaMatos</h2>
+    <h2 class="text-center mt-5">Ils louent du matériel sur Vistason</h2>
     <div class="row mb-4 text-center">
         <div class="col">
             <img class="card-img-top mx-auto w-50" src="{{asset('img/535-5357941_logo-tf1-png-4-png-image-rh-pngimage.png')}}" alt="TF1 Logo">
@@ -76,15 +77,15 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Réponses à vos questions</h5>
-            <p class="card-text">Trouvez toutes les informations sur la location de matériel sur LocaMatos.</p>
+            <p class="card-text">Trouvez toutes les informations sur la location de matériel sur Vistason.</p>
           </div>
         </div>
       </div>
       <div class="col-sm-6">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">À qui s’adresse LocaMatos ?</h5>
-            <p class="card-text">LocaMatos est destiné aux professionnels et particuliers cherchant à louer du matériel de qualité à proximité.</p>
+            <h5 class="card-title">À qui s’adresse Vistason ?</h5>
+            <p class="card-text">Vistason est destiné aux professionnels et particuliers cherchant à louer du matériel de qualité à proximité.</p>
           </div>
         </div>
       </div>
@@ -96,7 +97,7 @@
       <div class="col-sm-6">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Quel matériel est disponible sur LocaMatos ?</h5>
+            <h5 class="card-title">Quel matériel est disponible sur Vistason ?</h5>
             <p class="card-text">Nous proposons une vaste gamme de matériel allant de l'équipement audiovisuel aux outils de construction.</p>
           </div>
         </div>
@@ -113,7 +114,7 @@
 </div>
 
 <div class="section">
-    <a href="#" class="btn btn-primary bg-dark d-block mx-auto mb-5">Discuter avec notre équipe</a>
+<a href="mailto:vistason@domaine.com?subject=Sujet de l'e-mail&body=Bonjour, je souhaite discuter avec l'équipe..." class="btn btn bg-dark text-white d-block mx-auto mb-5">Discuter avec notre équipe</a>
 </div>
 
 {% endblock %}

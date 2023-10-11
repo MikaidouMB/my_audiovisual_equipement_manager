@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des évaluations{% endblock %}
+
+{% block body %}
+<div class="container-fluid mb-5">
+        <div class="row mb-5">
+        {{ include('_partials/navbar_profile.html.twig') }}
+    </div>
+    <h1>Liste des évaluations</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID du matériel</th>
+                <th>Commentaire</th>
+                <th>Date de création</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evaluation in evaluations %}
+                <tr>
+                    <td>{{ evaluation.id }}</td>
+                    <td>{{ evaluation.Idmateriel.nom }}</td>
+                    <td>{{ evaluation.commentaire }}</td>
+                    <td>{{ evaluation.createdAt|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

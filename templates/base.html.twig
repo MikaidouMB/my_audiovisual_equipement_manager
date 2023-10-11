@@ -34,17 +34,19 @@
     {% include "_partials/_flash.html.twig" %}
 
     <!-- Header Section with Image Background -->
-   <header class="header-background py-5 bg-dark">
+<header class="header-background py-5 bg-dark">
     <div class="container px-4 px-lg-5 my-5 header">
-            <div class="text-center text-white">
-                <h1 class="display-4 fw-bolder">L'expérience audiovisuelle ultime vous attend. Découvrez notre sélection</h1>
-                <form class="form-inline mr-2">
-                    <input class="form-control mb-3" type="search" placeholder="Rechercher" aria-label="Rechercher">
-                    <button id="ajax-button" class="btn btn-outline-warning my-2 my-sm-0 mt-5" type="submit">Recherche</button>
-                </form>
-            </div>
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">L'expérience audiovisuelle ultime vous attend. Découvrez notre sélection</h1>
+            <form class="form-inline mr-2 d-inline-block">
+                <!-- Ajout de la classe form-control-sm et définition d'une largeur personnalisée -->
+                <input class="form-control form-control-lg mb-3 w-600" type="search" placeholder="Caméra, moniteur..." aria-label="Rechercher">
+                <button id="ajax-button" class="btn btn-outline-warning my-2 my-sm-0 mt-5" type="submit">Recherche</button>
+            </form>
         </div>
-    </header>
+    </div>
+</header>
+
 
     {% set currentRoute = app.request.attributes.get('_route') %}
     {% if currentRoute starts with 'admin_' %}

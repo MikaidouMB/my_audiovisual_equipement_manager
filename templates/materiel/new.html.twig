@@ -1,11 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Materiel{% endblock %}
+{% block title %}Nouveau Materiel{% endblock %}
 
 {% block body %}
-    <h1>Ajouter un nouveau materiel</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            
+            {% for flash_error in app.flashes('materiel_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
 
-    {{ include('materiel/_form.html.twig') }}
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Ajouter un nouveau materiel</h3>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'form'}}) }}
 
-    <a href="{{ path('app_materiel_index') }}">back to list</a>
+                    <div class="form-group">
+                        {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    {{ include('materiel/_form.html.twig') }}
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            <div class="mt-3 ">
+                <a href="{{ path('app_materiel_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

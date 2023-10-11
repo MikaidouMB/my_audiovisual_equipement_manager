@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Evaluations;
 use App\Entity\Materiel;
+use App\Repository\EvaluationsRepository;
 use App\Service\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,8 +45,10 @@ class HomeController extends AbstractController
         public function showProduct(EntityManagerInterface $entityManager, int $id): Response
         {
         $product = $entityManager->getRepository(Materiel::class)->find($id);
-
+        $evaluations = $entityManager->getRepository(Evaluations::class)->findRateByMateriel($id);
+          
           return $this->render('product_detail.html.twig', [
+            'evaluations' =>$evaluations,
             'product' => $product,
             'nbItemPanier' => $this->panier->getNbArticles()
 

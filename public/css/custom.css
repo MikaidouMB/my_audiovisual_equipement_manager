@@ -1,6 +1,16 @@
 .navbar-dark .navbar-nav .nav-link:hover {
     color: gold;
 }
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar.custom-navbar {
+    margin: 0;
+    padding: 0;
+    width: 100%; /* Assurez-vous qu'il s'étend sur toute la largeur */
+}
 
 * {
     box-sizing: border-box;
@@ -10,10 +20,7 @@ body {
     overflow-x: hidden;
 }
 
-.container-fluid {
-    padding-left: 15px;
-    padding-right: 15px;
-}
+
 
 .row {
     margin-left: -15px;
@@ -140,4 +147,11 @@ header.bg-dark {
     padding: 2em;
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.navbar-nav .nav-link {
+    transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #aaa;
 }
