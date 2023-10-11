@@ -34,7 +34,6 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $user->setPassword(
             $userPasswordHasher->hashPassword(
                     $user,
@@ -143,4 +142,5 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Email de vérification envoyé');
         return $this->redirectToRoute('app_login');
     }
+    
 }

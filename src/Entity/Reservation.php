@@ -67,6 +67,9 @@ class Reservation
     #[ORM\JoinColumn(name: "reservation_id", referencedColumnName: "id")]
     #[ORM\InverseJoinColumn(name: "materiel_id", referencedColumnName: "id")]
     public $materiels;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $isValidated = null;
     
     
 
@@ -283,6 +286,18 @@ class Reservation
     public function getReservationMateriel(): Collection
     {
         return $this->materiels;
+    }
+
+    public function IsValidated(): ?bool
+    {
+        return $this->isValidated;
+    }
+
+    public function setIsValidated(?bool $isValidated): static
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
     }
     
 }

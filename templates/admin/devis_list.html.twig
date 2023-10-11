@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des réservations{% endblock %}
+
+{% block body %}
+<h1>Liste des réservations</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Nom du client</th>
+            <th>Statut du devis</th> <!-- Ajout d'une colonne pour le statut du devis -->
+            <th>Accéder au devis/facture</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+        <tr>
+            <td>{{ reservation.createdAt|date('d/m/Y H:i:s') }}</td>
+            <td>{{ reservation.user.prenom }} {{ reservation.user.nom }}</td>
+            <td>
+                {% if reservation.isValidated %} <!-- Supposant que `isValidated` renvoie un booléen true ou false -->
+                    Validé
+                {% else %}
+                    Non validé
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ path('admin_app_devis_details', {'id': reservation.user.id, 'orderId': reservation.id}) }}" class="btn btn-primary">Voir le devis/facture</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

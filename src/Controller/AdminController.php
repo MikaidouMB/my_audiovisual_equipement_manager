@@ -9,9 +9,9 @@ use App\Entity\Boutique;
 use App\Entity\Reservation;
 use App\Form\MaterielType;
 use App\Form\UserType;
-use App\Repository\ReservationRepository;
 use App\Repository\BoutiqueRepository;
 use App\Repository\UserRepository;
+use App\Service\SendEmail;
 use App\Service\ReservationMaterielService;
 use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +21,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\PanierService;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('admin', name: 'admin_')]
@@ -320,4 +319,105 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/list/devis', name: 'app_devis_list', methods: ['GET'])]
+    public function listReservations()
+    {
+        $reservations = $this->entityManager->getRepository(Reservation::class)->findAll();
+
+        return $this->render('admin/devis_list.html.twig', [
+            'reservations' => $reservations,
+            'nbItemPanier' => $this->panier->getNbArticles()
+
+        ]);
+    }
+    #[Route('/details/devis/{id}/{orderId}', name: 'app_devis_details', methods: ['GET'])]
+    public function showDevis($id, int $orderId, ReservationMaterielService $reservationMaterielService)
+    {
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
+        $reservation = $this->entityManager->getRepository(Reservation::class)->find($orderId);
+        //dd($reservation);
+
+        $materielNames = [];
+        $materielPrix = [];
+    
+        foreach ($materiels as $materiel) {
+            $materielNames[$materiel->getId()] = $materiel->getNom();
+            $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
+        }
+    
+        $reservations = $user->getReservations();
+        $orderDetails = [];
+        $totalPrices = [];
+    
+        
+           // $orderDetails[$reservationId] = $this->reservationMaterielService->getOrderDetails($orderId);
+        
+        dump($orderId);
+        return $this->render('admin/devis_detail.html.twig', [
+            'user' => $user,
+            'reservation'=> $reservation,
+            //'orderDetails' => $orderDetails[$orderId],
+            'materielNames' => $materielNames,
+            'nbItemPanier' => $this->panier->getNbArticles(),
+            'materielPrix' => $materielPrix,
+           // 'prixTotal' => $totalPrices[$orderId] 
+        ]);
+    }
+
+    #[Route('/details/devis/{id}/{orderId}/is-validated', name: 'devis_is_validated', methods: ['GET'])]
+    public function isValidated($id, int $orderId, SendEmail $sendEmail, EntityManagerInterface $entityManager)
+    {
+        $reservation = $entityManager->getRepository(Reservation::class)->find($orderId);
+        
+        if (!$reservation) {
+            $this->addFlash('danger', 'Devis non trouvé.');
+            return $this->redirectToRoute('admin_app_devis_list'); 
+        }
+    
+        $reservation->setIsValidated(1);
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+    
+        if ($reservation->IsValidated()) {
+            $this->addFlash('success', 'Le devis a été validé.');
+            
+            // Assuming you want to send an email when the quote is validated
+            $sendEmail->send(
+                'Vistason@domain.com',
+                $reservation->getUser()->getEmail(),  // Assuming you have a getUser() method
+                'Votre devis a été validé',
+                'confirmation_devis',  // Nom du template Twig pour votre email
+                ['reservation' => $reservation]  // Variables pour le template
+            );
+        } else {
+            $this->addFlash('info', 'Le devis n’a pas encore été validé.');
+        }
+    
+        return $this->redirectToRoute('admin_app_devis_list'); 
+    }
+
+    #[Route('/details/devis/{id}/{orderId}/invalidate', name: 'devis_invalidate', methods: ['GET'])]
+    public function invalidateDevis($id, int $orderId, SendEmail $sendEmail, EntityManagerInterface $entityManager)
+    {
+        $reservation = $entityManager->getRepository(Reservation::class)->find($orderId);
+    
+        if (!$reservation) {
+            $this->addFlash('danger', 'Devis non trouvé.');
+            return $this->redirectToRoute('admin_app_devis_list'); 
+        }
+
+        $reservation->setIsValidated(0); // Ici, nous dévalidons le devis
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+
+        if (!$reservation->IsValidated()) {
+            $this->addFlash('success', 'Le devis a été dévalidé.');
+            
+        } else {
+            $this->addFlash('info', 'Le devis est toujours validé.');
+        }
+
+        return $this->redirectToRoute('admin_app_devis_list'); 
+    }
 }

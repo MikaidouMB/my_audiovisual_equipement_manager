@@ -1,0 +1,23 @@
+
+{% block subject %}
+    Votre devis a été validé!
+{% endblock %}
+
+{% block body %}
+    <div style="background-color: #f8f9fa; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <img src="{{ asset('img/logo.jpg') }}" alt="Logo de l'entreprise" style="max-width: 150px;">
+            <h1 style="color: #333;">Bonjour {{ reservation.prenom }} {{ reservation.nom }},</h1>
+            <p style="color: #666;">
+                Nous sommes heureux de vous informer que votre devis N° D2023-{{ reservation.id }} a été validé.
+            </p>
+            <p style="color: #666;">
+                Pour plus de détails, veuillez consulter votre espace personnel ou nous contacter directement.
+            </p>
+            <br><br>
+            <p style="color: #666;">Merci de nous avoir choisis!</p>
+            <p style="color: #666;">Cordialement,</p>
+            <p style="color: #666;">L'équipe de VistaSon</p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,11 +1,11 @@
 # my_audiovisual_equipement_manager
 things to do
+
 MON COMPTE
 - Profil(historique commandes)
 
 SéCURITé
 -routes Admin non sécurisées  
-
 
 PANIER
 -reduire champs formulaire
@@ -24,9 +24,13 @@ BDD
 -table adresse relié au id user
 
 STYLE
--remplir footer, mettre du texte dans serv et presta
+-remplir footer,
 -changer la vue admin pour que l'on fasse la difference
 -LOGO
+-Ameliorer navabar
+-REdimensionner les photo (bundle)
+
+
 - notification 
 -mettre en prod
 

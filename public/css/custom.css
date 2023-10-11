@@ -135,3 +135,9 @@ header.bg-dark {
     top: -10px;        /* Déplace le badge vers le haut */
     right: -10px;      /* Déplace le badge vers la droite */
 }
+.section {
+    margin: 2em 0;
+    padding: 2em;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

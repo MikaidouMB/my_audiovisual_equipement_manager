@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Location de matériel audiovisuel{% endblock %}
+
+{% block body %}
+
+<div class="section">
+    <h2 class="text-center">Louez du matériel simplement et au meilleur prix proche de votre production</h2>
+
+    <div class="row">
+        {% for step in ["Votre liste matérielle", "Simplifiez la location", "Louez en toute sécurité"] %}
+        <div class="col-md-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 text-center">
+                <div class="card-header">{{ loop.index }}</div>
+                <div class="card-body d-flex flex-column">
+                    <h3 class="card-title">{{ step }}</h3>
+                    <p class="card-text mb-auto">
+                        {% if loop.index == 1 %}
+                        Un système de recherche intuitif utilisant la géolocalisation vous permet de trouver rapidement le matériel dont vous avez besoin, même à la dernière minute ! Une liste matérielle importante ? <br><a href="#">Contactez-nous</a> !
+                        {% elseif loop.index == 2 %}
+                        Échange instantané avec les meilleurs loueurs proches de vous, devis en ligne, tarification transparente et automatisation des contrats. Vous n’aurez jamais loué aussi simplement.
+                        {% elseif loop.index == 3 %}
+                        Récupérez votre matériel auprès du loueur et commencez à tourner ! Chaque location effectuée via la plateforme bénéficie automatiquement de la protection casse & vol professionnel!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section">
+    <a href="{{path('app_register')}}" class="btn btn-primary bg-dark mx-auto d-block">Créer mon compte gratuitement</a>
+</div>
+
+<div class="section">
+    <h2 class="text-center mt-5 mb-5">Modèles populaires à la location</h2>
+    <div class="row">
+        {% for equipment in equipments %}
+        <div class="col-md-3 mb-4 d-flex align-items-stretch">
+            <div class="card h-100">
+                <img class="card-img-top mx-auto w-50" src="{{asset('img/'~ equipment.image.ref)}}" alt="...">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">{{ equipment.nom }}</h4>
+                    <p class="card-text mb-auto">{{ equipment.type }}</p>
+                    <p class="card-text">À partir de {{ equipment.prixLocation }} HT /jour</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="text-center mt-5">Ils louent du matériel sur LocaMatos</h2>
+    <div class="row mb-4 text-center">
+        <div class="col">
+            <img class="card-img-top mx-auto w-50" src="{{asset('img/535-5357941_logo-tf1-png-4-png-image-rh-pngimage.png')}}" alt="TF1 Logo">
+        </div>
+        <div class="col">
+            <img class="card-img-top mx-auto w-50" src="{{asset('img/CanalPlus.svg.png')}}" alt="Canal Plus Logo">
+        </div>
+        <div class="col">
+            <img class="card-img-top mx-auto w-50" src="{{asset('img/téléchargement.png')}}" alt="RMC Logo">
+        </div>
+        <div class="col">
+            <img class="card-img-top mx-auto w-50" src="{{asset('img/logo-m6.png')}}" alt="M6 Logo">
+        </div>  
+    </div>
+</div>
+
+<div class="section">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Réponses à vos questions</h5>
+            <p class="card-text">Trouvez toutes les informations sur la location de matériel sur LocaMatos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">À qui s’adresse LocaMatos ?</h5>
+            <p class="card-text">LocaMatos est destiné aux professionnels et particuliers cherchant à louer du matériel de qualité à proximité.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="row mb-5">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Quel matériel est disponible sur LocaMatos ?</h5>
+            <p class="card-text">Nous proposons une vaste gamme de matériel allant de l'équipement audiovisuel aux outils de construction.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Comment être sûr du sérieux des loueurs ?</h5>
+            <p class="card-text">Tous nos loueurs sont vérifiés et notés par les utilisateurs pour garantir la meilleure expérience de location.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="section">
+    <a href="#" class="btn btn-primary bg-dark d-block mx-auto mb-5">Discuter avec notre équipe</a>
+</div>
+
+{% endblock %}
