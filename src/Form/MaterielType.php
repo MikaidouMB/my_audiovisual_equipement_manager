@@ -2,12 +2,13 @@
 
 namespace App\Form;
 
-use App\Entity\Images;
+use App\Entity\Image;
 use App\Entity\Materiel;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MaterielType extends AbstractType
 {
@@ -21,14 +22,13 @@ class MaterielType extends AbstractType
             ->add('prixLocation')
             ->add('statut')
             ->add('dateAchat')
-            ->add('image', EntityType::class, [
-                'class' => Images::class,
-                'choice_label' => function(Images $image) {
-                    return $image->getRef();
-                },
+            ->add('image', FileType::class, [
+                'label' => 'Image',
+                'mapped' => false, 
+                'multiple' => true, 
+                'attr' => ['class' => 'form-control']
             ]);
-        ;
-    }
+            }
 
     public function configureOptions(OptionsResolver $resolver): void
     {

@@ -21,6 +21,18 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+    public function findByMaterielReservationId($reservationId)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('r', 'm') // Nous incluons ici l'alias 'r' pour l'entité racine
+            ->join('r.materiels', 'm')
+            ->where('r.id = :reservationId')
+            ->setParameter('reservationId', $reservationId);
+
+            return $qb->getQuery()->getOneOrNullResult();
+        }
+
+        
 //    /**
 //     * @return Reservation[] Returns an array of Reservation objects
 //     */

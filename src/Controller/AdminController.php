@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Materiel;
 use App\Entity\User;
 use App\Form\BoutiqueType;
@@ -54,14 +55,14 @@ class AdminController extends AbstractController
         $materiels = $this->paginatorInterface->paginate(
             $data,
             $request->query->getInt('page',1),
-            11,
+            20,
         );
 
         return $this->render('admin/index.html.twig', [
             'materiels' => $materiels,'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
-    #[Route('/admin/{id}', name: 'show', methods: ["GET"])]
+    #[Route('/{id}/materiel', name: 'show', methods: ["GET"])]
     public function show(Materiel $materiel): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -78,65 +79,88 @@ class AdminController extends AbstractController
         $materiel = new Materiel();
         $form = $this->createForm(MaterielType::class, $materiel);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Gestion des images
+            $images = $form->get('image')->getData();
+    
+            foreach ($images as $image){
+                $file = md5(uniqid()) . '.' . $image->guessExtension();
+    
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $file
+                );
+                $img = new Image();
+                $img->setImageName($file);
+                $materiel->setImage($img);
+            }
+            
             $entityManager->persist($materiel);
             $entityManager->flush();
-
+    
+            $this->addFlash(
+                'success',
+                'Le materiel avec les images a bien été créé'
+            );
+    
             return $this->redirectToRoute('app_materiel_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('materiel/new.html.twig', [
-            'materiel' => $materiel,
-            'form' => $form,
-            'nbItemPanier' => $this->panier->getNbArticles()
-        ]);
-    }
-
-    #[Route('/admin/{id}/edit', name: 'edit_product', methods: ["GET", "POST"])]
-    public function edit(Request $request, Materiel $materiel): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-    
-        // Récupérer une référence à l'image actuelle
-        $oldImage = $materiel->getImage();
-    
-        $form = $this->createForm(MaterielType::class, $materiel);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Après la soumission du formulaire, on récupère la nouvelle image, si elle est différente de l'ancienne
-            $newImage = $materiel->getImage();
-    
-            $entityManager = $this->doctrine->getManager();
-    
-            if ($newImage && $oldImage && $newImage !== $oldImage) {
-                // Si une nouvelle image a été fournie et qu'elle est différente de l'ancienne, on la définit pour le matériel
-                $materiel->setImage($newImage);
-                $newImage->setMateriel($materiel);
-    
-                // Supprimer l'ancienne image de la base de données
-                $entityManager->remove($oldImage);
-            }
-    
-            $entityManager->flush();
-    
-            return $this->redirectToRoute('admin_index');
-        }
-    
-        return $this->render('admin/editMateriel.html.twig', [
             'materiel' => $materiel,
             'form' => $form->createView(),
             'nbItemPanier' => $this->panier->getNbArticles()
         ]);
     }
     
+    #[Route('/admin/{id}/edit', name: 'edit_product', methods: ["GET", "POST"])]
+    public function edit(Request $request, Materiel $materiel, EntityManagerInterface $entityManager,): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN'); 
+
+    $form = $this->createForm(MaterielType::class, $materiel);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $images = $form->get('image')->getData();
+
+        foreach ($images as $image){
+            $file = md5(uniqid()) . '.' . $image->guessExtension();
+
+            $image->move(
+                $this->getParameter('images_directory'),
+                $file
+            );
+            $img = new Image();
+            $img->setImageName($file);
+            $materiel->setImage($img);
+            }
+        $entityManager->persist($materiel);
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            'Le materiel a bien été modifié'
+        );
+        return $this->redirectToRoute('admin_index',[],Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('admin/editMateriel.html.twig', [
+        'materiel' => $materiel,
+        'form' => $form->createView(),
+        'nbItemPanier' => $this->panier->getNbArticles()
+    ]);
+}
+
 
     #[Route('/materiel/{id}/delete', name: 'delete_product', methods: ["POST"])]
     public function delete(Request $request, Materiel $materiel): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    {      
 
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
         if ($this->isCsrfTokenValid('delete' . $materiel->getId(), $request->request->get('_token'))) {
             $entityManager = $this->doctrine->getManager();
             $entityManager->remove($materiel);
@@ -237,7 +261,7 @@ class AdminController extends AbstractController
 
    
     #[Route("/user/{id}/order/{orderId}", name: "app_user_order_details")]
-    public function orderDetails($id, int $orderId, ReservationMaterielService $reservationMaterielService)
+    public function orderDetails($id, int $orderId)
     {
         $user = $this->entityManager->getRepository(User::class)->find($id);
         $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
@@ -352,27 +376,21 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/details/devis/{id}/{orderId}', name: 'app_devis_details', methods: ['GET'])]
-    public function showDevis($id, int $orderId, ReservationMaterielService $reservationMaterielService)
+    #[Route('/details/devis/{orderId}', name: 'app_devis_details', methods: ['GET'])]
+    public function showDevis(int $orderId)
     {
-        $user = $this->entityManager->getRepository(User::class)->find($id);
-        $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
+        $reservation = $this->entityManager->getRepository(Reservation::class)->findByMaterielReservationId($orderId);
+        $orderDetails = $this->reservationMaterielService->getOrderDetails($orderId);
         $reservation = $this->entityManager->getRepository(Reservation::class)->find($orderId);
 
-        $materielNames = [];
-        $materielPrix = [];
-    
-        foreach ($materiels as $materiel) {
-            $materielNames[$materiel->getId()] = $materiel->getNom();
-            $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
+        if (!$reservation) {
+        throw $this->createNotFoundException('Aucune réservation trouvée pour l\'ID: '.$orderId);
         }
 
         return $this->render('admin/devis_detail.html.twig', [
-            'user' => $user,
-            'reservation'=> $reservation,
-            'materielNames' => $materielNames,
+            'reservation' => $reservation,
+            'orderDetails' => $orderDetails,
             'nbItemPanier' => $this->panier->getNbArticles(),
-            'materielPrix' => $materielPrix,
         ]);
     }
 
@@ -432,28 +450,17 @@ class AdminController extends AbstractController
     }
 
     #[Route('/pdf/{id}/{orderId}', name: 'devis.pdf', methods: ['GET'])]
-    public function generatePdfDevis($id, $orderId, Reservation $reservation = null, PdfService $pdf, EntityManagerInterface $entityManager)
+    public function generatePdfDevis($id, $orderId, Reservation $reservation = null, PdfService $pdf)
     {
-        $reservation = $entityManager->getRepository(Reservation::class)->find($orderId);
-        $user = $this->entityManager->getRepository(User::class)->find($id);
-        $materiels = $this->entityManager->getRepository(Materiel::class)->findAll();
+        $reservation = $this->entityManager->getRepository(Reservation::class)->findByMaterielReservationId($orderId);
+        $orderDetails = $this->reservationMaterielService->getOrderDetails($orderId);
         $reservation = $this->entityManager->getRepository(Reservation::class)->find($orderId);
 
-        $materielNames = [];
-        $materielPrix = [];
-    
-        foreach ($materiels as $materiel) {
-            $materielNames[$materiel->getId()] = $materiel->getNom();
-            $materielPrix[$materiel->getId()] = $materiel->getPrixLocation();
-        }
-    
         $html = $this->renderView('admin/order_pdf.html.twig', [
             'reservation' => $reservation,
+            'orderDetails' => $orderDetails,
             'nbItemPanier' => $this->panier->getNbArticles(),
-            'user' => $user,
-            'materielNames' => $materielNames,
-            'nbItemPanier' => $this->panier->getNbArticles(),
-            'materielPrix' => $materielPrix,
+            'totalWithTVA' => $reservation->getPrixTotal(),
     ]);
         $pdf->showPdfFile($html);
     }

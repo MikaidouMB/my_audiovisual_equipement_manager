@@ -96,7 +96,9 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         return $this->render('security/reset_password_request.html.twig', [
-            'requestPassForm' => $form->createView()
+            'requestPassForm' => $form->createView(),
+            'nbItemPanier' => $this->panier->getNbArticles()
+
         ]);
     }
 
@@ -133,7 +135,9 @@ class SecurityController extends AbstractController
             }
 
             return $this->render('security/reset_password.html.twig', [
-                'passForm' => $form->createView()
+                'passForm' => $form->createView(),
+                'nbItemPanier' => $this->panier->getNbArticles()
+
             ]);
         }
         $this->addFlash('danger', 'Jeton invalide');

@@ -1,112 +1,130 @@
-{% block title %}Devis N° D2023-{{ reservation.id }}{% endblock %}
-
 {% block body %}
-
 <style>
-    .header, .footer, .info-section, .table-section {
-        margin-bottom: 50px;
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
     }
-    
+    .header {
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+    }
+    .row {
+        display: flex;
+        flex-wrap: nowrap; /* No wrapping so that everything fits in one page */
+        justify-content: space-between;
+        margin: 5px 0;
+    }
+    .col-md-6 {
+        width: 48%;
+    }
+    .text-right {
+        text-align: right;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
-
     th, td {
-        border: 1px solid black;
-        padding: 10px;
-        text-align: left;
+        border: 1px solid #ccc;
+        padding: 8px;
     }
-
     th {
         background-color: #f2f2f2;
     }
 </style>
 
 <div class="header">
-<div class="row">
-
-   <div class="col-md-6 text-right">
-        <img class="logo" src="{{ absolute_url(asset('img/logo.jpg')) }}" alt="Logo de l'entreprise">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Devis N° D2023-{{ reservation.id }}</h1>
+        </div>
+        <div class="col-md-6 text-right">
+            <img class="logo" src="{{ absolute_url(asset('img/logo.jpg')) }}" alt="Logo de l'entreprise" style="max-width: 150px;">
+        </div>
     </div>
-    <h1>Devis N° D2023-{{ reservation.id }}</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <p>Date d'émission: {{ "now"|date("d/m/Y") }}</p>
+            <p>Date d'échéance: {{ "now"|date_modify('+1 month')|date("d/m/Y") }}</p>
+        </div>
+        <div class="col-md-6 text-right">
+            <p>Exemple SARL</p>
+            <p>Adresse de l'entreprise</p>
+            <p>Code Postal - Ville de l'entreprise</p>
+            <p>Téléphone / Email / Site Internet de l'entreprise</p>
+        </div>
     </div>
 </div>
-   
-    </div>
 
-    <div class="row mt-3">
-        <div>Date d'émission: {{ "now"|date("d/m/Y") }}</div>
-        <div>Date d'échéance: {{ "now"|date_modify('+1 month')|date("d/m/Y") }}</div>
-    </div><br>
-    
-<div class="row mt-4 mb-5">
-    <div class="col-md-6 text-right"> 
-        Exemple SARL <br>
-        Adresse de l'entreprise <br>
-        Code Postal - Ville de l'entreprise <br>
-        Téléphone / Email / Site Internet de l'entreprise
-    </div><br>
+<div class="info-section">
+    <div class="row">
+        <div class="col-md-6">
+            <p>{{ reservation.prenom }} {{ reservation.nom }}</p>
+            <p>{{ reservation.adresse }}</p>
+            <p>{{ reservation.codePostal }} - {{ reservation.ville }}</p>
+            <p>{{ reservation.email }}</p>
+        </div>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Désignation</th>
+            <th>Quantité</th>
+            <th>TVA %</th>
+            <th>P.U. HT</th>
+            <th>Montant TVA</th>
+            <th>Total TTC</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% set reservationTotal = 0 %}
+    {% for detail in orderDetails %}
+        {% set equipment = reservation.materiels|filter(equip => equip.id == detail.materiel_id)|first %}
+        {% set itemTotal = equipment.prixLocation * detail.quantity %}
+        {% set reservationTotal = reservationTotal + itemTotal %}
+        {% set montantTva = itemTotal * 0.1 %}
+        <tr>
+            <td>{{ equipment.nom }}</td>
+            <td>{{ detail.quantity }}</td>
+            <td>10 %</td>
+            <td>{{ equipment.prixLocation }} €</td>
+            <td>{{ montantTva|number_format(2, ',', ' ') }} €</td>
+            <td>{{ (itemTotal + montantTva)|number_format(2, ',', ' ') }} €</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" class="text-right">Total HT</td>
+            <td>{{ reservationTotal|number_format(2, ',', ' ') }} €</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="text-right">Total TTC</td>
+            <td>{{ (reservationTotal * 1.1)|number_format(2, ',', ' ') }} €</td>
+        </tr>
+    </tfoot>
+</table>
+
+<h4>Conditions de paiement</h4>
+<p>Solde à la livraison</p>
+
+<h4>Moyens de paiement</h4>
+<p>Espèces - Virement BANCAIRE sur le compte: XXX</p>
+
+<div class="row">
     <div class="col-md-6">
-        {{ reservation.prenom }} {{ reservation.nom }} <br>
-        {{ reservation.adresse }} <br>
-        {{ reservation.codePostal }} - {{ reservation.ville }} <br>
-        {{ reservation.email }}
+        <p>Exemple SARL au capital de 0,00 €</p>
+        <p>RCS Nantes n° XXX XXX XXX - Numéro de TVA: XXX</p>
     </div>
-</div><br>
-    
-    <table class="table table-bordered mt-3 mb-5">
-        <thead class="bg-light">
-            <tr class="mt-5 bg-dark text-white p-2">
-                <th >Désignation</th>
-                <th>Quantité</th>
-                <th>TVA %</th>
-                <th>P.U. HT</th>
-                <th>Montant TVA</th>
-                <th>Total TTC</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set totalHT = 0 %}
-            {% set totalTVA = 0 %}
-            {% for materiel in reservation.materiels %}
-                {% set itemHT = materielPrix[materiel.id] %}
-                {% set itemTVA = itemHT * 0.10 %}
-                {% set itemTTC = itemHT + itemTVA %}
-                {% set totalHT = totalHT + itemHT %}
-                {% set totalTVA = totalTVA + itemTVA %}
-                <tr>
-                    <td>{{ materielNames[materiel.id] }}</td>
-                    <td>1</td>
-                    <td>10 %</td>
-                    <td>{{ itemHT|number_format(2, ',', ' ') }} €</td>
-                    <td>{{ itemTVA|number_format(2, ',', ' ') }} €</td>
-                    <td>{{ itemTTC|number_format(2, ',', ' ') }} €</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="text-right">Total HT</td>
-                <td>{{ totalHT|number_format(2, ',', ' ') }} €</td>
-                <td>{{ totalTVA|number_format(2, ',', ' ') }} €</td>
-                <td>{{ (totalHT + totalTVA)|number_format(2, ',', ' ') }} €</td>
-            </tr>
-        </tfoot>
-    </table><br>
-    
-    <h4>Conditions de paiement</h4>
-
-    <p>Solde à la livraison</p>
-
-    <h4>Moyens de paiement</h4>
-    <p>Espèces - Virement BANCAIRE sur le compte: XXX</p>
-    
-    <br>
-    <p>Exemple SARL au capital de 0,00 €</p>
-    <p>RCS Nantes n° XXX XXX XXX - Numéro de TVA: XXX</p>
-    <p>Assurance: XXX</p>
-
+    <div class="col-md-6 text-right">
+        <p>Assurance: XXX</p>
+    </div>
 </div>
 
 {% endblock %}

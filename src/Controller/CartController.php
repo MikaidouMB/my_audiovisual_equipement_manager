@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use \Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/cart', name: 'cart_')]
 class CartController extends AbstractController
@@ -24,6 +25,7 @@ class CartController extends AbstractController
     public function __construct(PanierService $panier ) {
         $this->panier = $panier;
     }
+    const TVA_RATE = 0.10;  // Taux de TVA de 10%. Vous pouvez changer cela selon votre situation.
 
     #[Route('/reservation', name: 'reservation')]
     public function reservationAndSubmit(
@@ -39,12 +41,16 @@ class CartController extends AbstractController
         
         $reservation = new Reservation();
         $user = $security->getUser();
-        
+        $reservation->setPrenom($user->getPrenom());
+        $reservation->setNom($user->getNom());
+        $reservation->setEmail($user->getEmail());
+
         $form = $this->createForm(ReservationFormType::class, $reservation);
         $form->handleRequest($request);
         
         $panier = $session->get("panier", []);
         $total = 0;
+        $totalWithTVA = 0;
 
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($panier as $itemId => $item) {
@@ -53,45 +59,45 @@ class CartController extends AbstractController
                 $quantity = $item['quantity'];
         
                 $total = $item['total'];
-                $materielId = $itemId; 
                 $materiel = $entityManager->getRepository(Materiel::class)->find($materielId);
         
                 if ($materiel) {
                     $reservation->addMateriel($materiel);
                 }
         
-                $reservation->setPrixTotal($total);
-                $reservation->setUser($user);
-            }
-
-            // Persistez d'abord la réservation pour générer l'ID
-            $entityManager->persist($reservation);
-            $entityManager->flush();
+                $tvaAmount = $total * self::TVA_RATE;
+                $totalWithTVA = $total + $tvaAmount;
         
-            // Récupérez l'ID de la réservation (maintenant il a été généré)
-            $reservationId = $reservation->getId();
-            // Exécutez la requête SQL brute après avoir obtenu l'ID de la réservation
-            $sql = "UPDATE reservation_materiel SET quantity = :quantity WHERE reservation_id = :reservationId AND materiel_id = :materielId";
-            $entityManager->getConnection()->executeQuery($sql, [
-                'quantity' => $quantity,
-                'reservationId' => $reservationId,
-                'materielId' => $materielId,
-            ]);
-            $sql = "UPDATE reservation_materiel SET user_id = :userId WHERE reservation_id = :reservationId AND materiel_id = :materielId";
-            $entityManager->getConnection()->executeQuery($sql, [
-                'reservationId' => $reservationId,
-                'materielId' => $materielId,
-                'userId' => $user->getId()
-            ]);
-            //dd('Requête SQL exécutée avec succès');
+                $reservation->setPrixTotal($totalWithTVA);
+                $reservation->setUser($user);
+        
+                $entityManager->persist($reservation);
+                $entityManager->flush();
+        
+                $reservationId = $reservation->getId();
+        
+                $sql = "UPDATE reservation_materiel SET quantity = :quantity WHERE reservation_id = :reservationId AND materiel_id = :materielId";
+                $entityManager->getConnection()->executeQuery($sql, [
+                    'quantity' => $quantity,
+                    'reservationId' => $reservationId,
+                    'materielId' => $materielId,
+                ]);
+        
+                $sql = "UPDATE reservation_materiel SET user_id = :userId WHERE reservation_id = :reservationId AND materiel_id = :materielId";
+                $entityManager->getConnection()->executeQuery($sql, [
+                    'reservationId' => $reservationId,
+                    'materielId' => $materielId,
+                    'userId' => $user->getId()
+                ]);
+            }
+        $currentUrl = $request->get('current_url');
 
             $this->addFlash('success', "Votre demande a bien été envoyée. Nous la traiterons dès que possible.");
         
-            // Effacez le panier après la soumission
             $session->remove('panier');
-        
             return $this->redirectToRoute('app_home');
         }
+        
     
         return $this->render('cart/index.html.twig', [
             'reservationForm' => $form->createView(),
@@ -99,11 +105,45 @@ class CartController extends AbstractController
             'boutiques' => $boutiques,
             'dataPanier' => $panier,
             'total' => $total,
+            'totalWithTVA' => $totalWithTVA,
             'nbItemPanier' => $this->panier->getNbArticles(),
             'totalGeneral' => $this->panier->getTotal(), 
         ]);
     }
     
+    
+
+    #[Route("/update-prices", name: "update_prices", methods: ["POST"])]
+    public function updatePrices(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        dd($data);
+        if (!isset($data['product_quantity'])) {
+            return new JsonResponse(['error' => 'Quantities not provided'], 400);
+        }
+
+        $totalGeneral = 0;
+
+        foreach ($data['product_quantity'] as $productId => $quantity) {
+            $reservation = $entityManager->getRepository(Reservation::class)->find($productId);
+            
+            if (!$reservation) {
+                return new JsonResponse(['error' => 'Product not found'], 400);
+            }
+
+            $totalPrice = $reservation->getPrixLocation() * $quantity;
+            $totalGeneral += $totalPrice;
+
+            // Assuming the Product entity has a setTotalPrice method
+            $reservation->setPrixTotal($totalPrice);
+            $entityManager->persist($reservation);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['totalGeneral' => $totalGeneral]);
+}
+
     #[Route('/add/{id}', name: 'add')]
     public function addToCart($id, Materiel $product, SessionInterface $session, Request $request)
     {
@@ -131,8 +171,12 @@ class CartController extends AbstractController
         
         $session->set("panier", $panier);
 
-        $this->addFlash('success', 'Produit ajouté au panier avec succès!');
         $currentUrl = $request->get('current_url');
+
+        if ($currentUrl && strpos($currentUrl, 'product_detail') !== false) {
+            $this->addFlash('success', "L'article a été ajouté au panier!");
+        }
+
         return $this->redirect($currentUrl);
     }
 

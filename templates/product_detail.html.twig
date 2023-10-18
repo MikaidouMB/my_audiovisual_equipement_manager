@@ -3,9 +3,11 @@
 <div class="container mt-5">
     <div class="row">
         <!-- Image du produit -->
-        <div class="col-md-6">
-            <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
-        </div>
+          {% if product.image|length > 0 %}
+            <img class="card-img-top w-50" src="{{ asset('uploads/'~ product.image.imageName) }}" alt="..." />
+            {% else %}
+                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+            {% endif %}
         <!-- Détails du produit -->
         <div class="col-md-6">
             <h2 id="productName">{{product.nom}}</h2>
@@ -17,14 +19,13 @@
                 <li class="list-group-item">Statut: <span id="productStatus">{{product.statut}}</span></li>
                 <li class="list-group-item">Date d'achat: <span id="purchaseDate">{{product.dateAchat|format_datetime('short','none',locale='fr')}}</span></li>
             </ul>
-          {% if product.statut == 'Disponible' %}
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+          {% if product.statut == 'disponible' %}
+            {% if app.user %}
                 <a href="{{ path('cart_add', {id: product.id, current_url: app.request.uri }) }}" class="btn btn-success mt-3">Ajouter au panier</a>
             {% else %}
                 <p>Veuillez <a href="{{ path('app_register') }}">vous inscrire</a> ou <a href="{{ path('app_login') }}">vous connecter</a> pour ajouter ce produit au panier.</p>
             {% endif %}
         {% endif %}
-
         </div>
     </div>
 </div>

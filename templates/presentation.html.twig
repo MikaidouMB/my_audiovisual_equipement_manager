@@ -41,7 +41,11 @@
         {% for equipment in equipments %}
         <div class="col-md-3 mb-4 d-flex align-items-stretch">
             <div class="card h-100">
-                <img class="card-img-top mx-auto w-50" src="{{asset('img/'~ equipment.image.ref)}}" alt="...">
+            {% if equipment.image|length > 0 %}
+                <img class="card-img-top mx-auto w-50" src="{{ asset('img/'~ equipment.image.imageName) }}" alt="...">
+            {% else %}
+                <img class="card-img-top mx-auto w-50" src="URL_d'une_image_par_défaut" alt="...">
+            {% endif %}
                 <div class="card-body d-flex flex-column">
                     <h4 class="card-title">{{ equipment.nom }}</h4>
                     <p class="card-text mb-auto">{{ equipment.type }}</p>
@@ -54,7 +58,7 @@
 </div>
 
 <div class="section">
-    <h2 class="text-center mt-5">Ils louent du matériel sur Vistason</h2>
+    <h2 class="text-center mt-5 mb-5">Ils louent du matériel sur Vistason</h2>
     <div class="row mb-4 text-center">
         <div class="col">
             <img class="card-img-top mx-auto w-50" src="{{asset('img/535-5357941_logo-tf1-png-4-png-image-rh-pngimage.png')}}" alt="TF1 Logo">

@@ -6,25 +6,29 @@
 <div class="container mt-5 text-center">
     <h1>Recherche</h1>
     <p>{{results|length}} resultat{% if results|length > 1 %}s{% endif %} pour
-         {% if keyword is defined %}"{{ keyword|default('unspecified keyword') }}" {% else %} " {{ type }} " {% endif %}
+        {% if keyword is defined %}"{{ keyword|default('unspecified keyword') }}" {% else %} " {{ type }} " {% endif %}
     </p>
+
     <div class="row">
         {% for product in results %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                {% if product.image.ref is defined %}
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card h-100">
+               {% set imageName = product.image ? product.image.imageName : null %}
+{{dump(product.image)}}
+{% if imageName %}
+    <img class="card-img-top mx-auto w-100" src="{{ asset('uploads/'~ imageName)|imagine_filter('my_thumb_6') }}" alt="Nom de l'image" />
+{% else %}
+    <img class="card-img-top mx-auto w-50" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" />
+{% endif %}
 
-                    <img class="card-img-top" src="{{asset('img/'~ product.image.ref) | imagine_filter('my_thumb_3') }}" alt="{{ product.nom }}" />
-                {% else %} 
-                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image indisponible" />
-                {% endif %}
-                <div class="card-body text-center"> <!-- centrage du texte -->
-                    <h5 class="card-title">{{ product.nom }}</h5>
-                    <p class="card-text">{{ product.prixLocation }}€ par jour</p>
-                    <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn btn-primary">Voir détails</a>
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.nom }}</h5>
+                        <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn btn-primary mb-auto">Voir détails</a>
+                        <p class="card-text">{{ product.prixLocation }}€ par jour</p>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 </div>

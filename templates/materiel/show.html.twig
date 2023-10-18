@@ -41,14 +41,20 @@
             </tr>
             <tr>
                 <th>Image</th>
-                <td>{{ materiel.image.ref }}</td>
+                <td>
+                    {% if materiel.image %}
+                        {{ materiel.image.imageName }}
+                    {% else %}
+                        Aucune image
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
 
     <div class="d-flex justify-content-center align-items-center my-4">  
-        <a href="{{ path('app_materiel_index') }}" class="btn btn-primary mr-3">Retour à la liste</a>
-        <a href="{{ path('app_materiel_edit', {'id': materiel.id}) }}" class="btn btn-warning mr-3">Editer</a>
+        <a href="{{ path('admin_index') }}" class="btn btn-primary mr-3">Retour à la liste</a>
+        <a href="{{ path('admin_edit_product', {'id': materiel.id}) }}" class="btn btn-warning mr-3">Editer</a>
         <div class="ml-3">
             {{ include('materiel/_delete_form.html.twig') }}
         </div>

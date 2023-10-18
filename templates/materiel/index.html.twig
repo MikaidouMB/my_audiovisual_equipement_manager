@@ -14,8 +14,8 @@
                 {% for materiel in materiels %}
                     <div class="col mb-5">
                         <div class="card h-100">
-                            {% if materiel.image.ref is defined %}
-                        <img class="card-img-top" src="{{asset('img/'~ materiel.image.ref)}}" alt="..." />
+                    {% if materiel.image.imageName is defined %}
+                        <img class="card-img-top" src="{{asset('uploads/'~ materiel.image.imageName)}}" alt="..." />
                      {% else %} 
                         <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
                     {%  endif %}

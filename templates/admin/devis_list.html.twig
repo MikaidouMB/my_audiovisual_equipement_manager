@@ -10,7 +10,7 @@
         <tr>
             <th>Date</th>
             <th>Nom du client</th>
-            <th>Statut du devis</th> <!-- Ajout d'une colonne pour le statut du devis -->
+            <th>Statut du devis</th>
             <th>Accéder au devis/facture</th>
         </tr>
     </thead>
@@ -20,14 +20,14 @@
             <td>{{ reservation.createdAt|date('d/m/Y H:i:s') }}</td>
             <td>{{ reservation.user.prenom }} {{ reservation.user.nom }}</td>
             <td>
-                {% if reservation.isValidated %} <!-- Supposant que `isValidated` renvoie un booléen true ou false -->
-                    Validé
-                {% else %}
+                {% if reservation.isValidated is not same as (true) %}
                     Non validé
+                {% else %}
+                    Validé
                 {% endif %}
             </td>
             <td>
-                <a href="{{ path('admin_app_devis_details', {'id': reservation.user.id, 'orderId': reservation.id}) }}" class="btn btn-primary">Voir le devis/facture</a>
+                <a href="{{ path('admin_app_devis_details', {'orderId': reservation.id}) }}" class="btn btn-primary">Voir le devis/facture</a>
             </td>
         </tr>
         {% endfor %}

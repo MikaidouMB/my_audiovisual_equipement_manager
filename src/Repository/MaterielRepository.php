@@ -67,6 +67,8 @@ public function findProductByType($type)
 }
 
 
+
+
 //    public function findOneBySomeField($value): ?Materiel
 //    {
 //        return $this->createQueryBuilder('m')

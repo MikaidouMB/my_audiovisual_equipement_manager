@@ -52,16 +52,15 @@
         {% for item in dataPanier %}
         <tr>
     <td>{{ item.product.id }}</td>
-    <td>
-    <input 
-        type="number" 
-        value="{{ item.quantity }}" 
-        name="product_quantity[{{ item.product.id }}]" 
-        class="form-control product-quantity" 
-        id="product-quantity-{{ item.product.id }}" 
-        data-product-id="{{ item.product.id }}" 
-        data-price="{{ item.product.prixLocation }}">
+
+
+<td>
+    <span id="product-quantity-{{ item.product.id }}" data-product-id="{{ item.product.id }}" data-price="{{ item.product.prixLocation }}">
+        {{ item.quantity }}
+    </span>
 </td>
+
+
 
     <td>{{ item.product.nom }}</td>
     <td>{{ item.product.prixLocation }} €</td>
@@ -81,12 +80,28 @@
         {% endfor %}
         <!-- Ajouter une nouvelle ligne pour le total cumulé -->
         <tr>
-            <td colspan="4" class="text-right"><strong>Total général :</strong></td>
-            <td>
             <span id="total-general">{{ totalGeneral | number_format(2) }}</span> €
-            </td>
-            <td></td>
         </tr>
+     <tr>
+                           <td colspan="4" class="text-right"><strong>Taux de TVA :</strong></td>
+                            <td><span id="tva-rate">10%</span></td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Montant de la TVA -->
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>Montant de la TVA :</strong></td>
+                            <td><span id="tva-amount">{{ (totalGeneral * 0.10) | number_format(2) }}</span> €</td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Total avec TVA -->
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>Total avec TVA par jour :</strong></td>
+                            <td><span id="total-with-tva">{{ (totalGeneral + (totalGeneral * 0.10)) | number_format(2) }}</span> €</td>
+                            <td></td>
+                        </tr>                            <!-- Taux de TVA -->
+            
     </tbody>
 </table>
 
@@ -95,7 +110,6 @@
       <td>
    
 </td>
-
     </div>
         
     <div class="mb-3">
@@ -165,15 +179,18 @@
         {{ form_label(reservationForm.accepteConditions, 'Je valide les conditions générales d\'utilisation (nouvelle version en date du 03/04/2023)') }}
         {{ form_errors(reservationForm.accepteConditions) }}
     </div>
-    
-<form action="{{ path('cart_reservation') }}" method="POST">
-    <button type="submit" class="btn btn-success">ENVOYER MA DEMANDE DE LOCATION</button>
-</form>
+    <div class="mb-4">
+    <button type="submit" class="btn btn-success">Envoyer votre demande de réservation</button>
+</div>
+
   
 </div>
 {% block javascripts %}
+<script>
 
+</script>
 {% endblock %}
+
 
 {% endblock %}
 

@@ -14,11 +14,12 @@
             {% for product in products %}
                 <div class="col mb-5">
                     <div class="card h-100">
-                    {% if product.image.ref is defined %}
-                        <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
-                     {% else %} 
+                    {% if product.image|length > 0 %}
+                    <img class="card-img-top" src="{{ asset('uploads/'~ product.image.imageName) }}" alt="..." />
+                    {% else %}
                         <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    {%  endif %}
+                    {% endif %}
+
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">

@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ReservationFormType extends AbstractType
 {
@@ -40,7 +41,7 @@ class ReservationFormType extends AbstractType
                 'required' => false
             ])
             ->add('prix_total', NumberType::class, [
-                'label' => 'Total', 
+                'mapped' => false, // Si 'prix_total' n'est pas une propriété directe de votre entité
             ])
             ->add('numeroTVA', NumberType::class, [
                 'label' => 'Numéro TVA (facultatif)',
@@ -53,7 +54,14 @@ class ReservationFormType extends AbstractType
             ->add('telephone', NumberType::class, ['label' => 'Téléphone'])
             ->add('accepteConditions', CheckboxType::class, [
                 'label' => 'Je valide les conditions générales d\'utilisation (nouvelle version en date du 03/04/2023)'
-            ]);
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Réserver',
+                'attr' => [
+                    'class' => 'btn btn-primary'
+                ]
+                ]);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver)

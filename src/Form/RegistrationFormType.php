@@ -37,6 +37,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            
             ->add('telephone', IntegerType::class, [
                 'constraints' => [
                     new NotBlank([

@@ -34,11 +34,11 @@
                                 <td>{{ product.nom }}</td>
                                 <td>{{ product.prixLocation }} €</td>
                                 <td>
-                                    {% if product.image.ref is defined %}
-                                        <img src="{{asset('img/'~ product.image.ref)}}" alt="{{ product.nom }}" width="100">
-                                    {% else %} 
-                                        <img src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" width="50">
-                                    {% endif %}
+                                {% if product.image|length > 0 %}
+                                    <img class="card-img-top reduced-size" src="{{ asset('uploads/'~ product.image.imageName) }}" alt="..." />
+                                {% else %}
+                                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                                {% endif %}
                                 </td>
                                 <td>
                                     <form action="{{ path('admin_delete_product', {'id': product.id}) }}" method="post">
@@ -58,8 +58,8 @@
                     {% for product in materiels.items %}
                         <div class="col mb-5">
                             <div class="card h-100">
-                                {% if product.image.ref is defined %}
-                                    <img class="card-img-top" src="{{asset('img/'~ product.image.ref)}}" alt="..." />
+                                {% if product.image.imageName is defined %}
+                                    <img class="card-img-top" src="{{asset('uploads/'~ product.image.imageName)}}" alt="..." />
                                 {% else %} 
                                     <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
                                 {% endif %}

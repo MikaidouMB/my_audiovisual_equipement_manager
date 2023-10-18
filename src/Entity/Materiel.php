@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entity;
-
+use App\Entity\Image;
 use App\Repository\MaterielRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -36,19 +36,16 @@ class Materiel
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateAchat = null;
 
-    #[ORM\OneToOne(mappedBy: 'materiel', targetEntity: Images::class, cascade: ['persist'])]
-    private ?Images $image = null;
+    #[ORM\OneToOne( inversedBy: 'materiel' ,targetEntity: Image::class, fetch: "EAGER", cascade:['persist', 'remove'])]
+    private Image $image;
     
-    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: Transactions::class)]
-    private Collection $transactions;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
 
     public function __construct()
-    {
-        $this->transactions = new ArrayCollection();
+    {        
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -134,21 +131,6 @@ class Materiel
         return $this;
     }
 
-    public function getImage(): ?Images
-    {
-        return $this->image;
-    }
-
-    public function setImage(?Images $image): self
-    {
-        $this->image = $image;
-        return $this;
-    }
-
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -162,5 +144,23 @@ class Materiel
     }
 
 
+    /**
+     * Get the value of image
+     */ 
+    public function getImage(): ?Image
+    {
+        return isset($this->image) ? $this->image : null;
+    }
 
+    /**
+     * Set the value of image
+     *
+     * @return  self
+     */ 
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
 }

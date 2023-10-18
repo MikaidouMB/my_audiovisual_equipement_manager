@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Evaluations;
 use App\Entity\Materiel;
-use App\Repository\EvaluationsRepository;
+use App\Entity\Image;
 use App\Service\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
