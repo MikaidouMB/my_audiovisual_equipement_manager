@@ -4,47 +4,33 @@
 
 {% block body %}
 
-        <!-- Header-->
-        <div class="d-flex flex-column min-vh-100">
-        <!-- Section-->
-        <section class="py-5">
-    <div class="container-fluid">
-        <div class="row gx-4 gx-lg-5 row-cols-4 justify-content-center">
-        
-            {% for product in products %}
-                <div class="col mb-5">
-                    <div class="card h-100">
+<div class="container">
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card">
                     {% if product.image|length > 0 %}
-                    <img class="card-img-top" src="{{ asset('uploads/'~ product.image.imageName) }}" alt="..." />
+                    <img class="card-img-top" src="{{ asset('uploads/equipements/'~ product.image.imageName) }}" alt="..." />
                     {% else %}
                         <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
                     {% endif %}
 
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder">{{ product.nom }}</h5>
-                                <!-- Product price-->
-                                {{ product.prixLocation }}€ par jour
-                            </div>
-                        </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('product_detail', {'id': product.id}) }}">Voir détails</a></div>
-                        </div>
+                    <div class="card-body">
+                        <h5 class="fw-bolder">{{ product.nom }}</h5>
+                        {{ product.prixLocation }}€ par jour
+                    </div>
+
+                    <div class="card-footer">
+                        <a class="btn btn-outline-dark btn-block" href="{{ path('product_detail', {'id': product.id}) }}">Voir détails</a>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-        <div class="navigation d-flex justify-content-center mb-8">
-    {{ knp_pagination_render(products) }}
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
-
-    </div>
- 
-</section>
-   
+<div class="d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(products) }}
+</div>
 
 {% endblock %}

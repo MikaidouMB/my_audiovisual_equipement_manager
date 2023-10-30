@@ -6,7 +6,6 @@ use App\Repository\ImagesRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Entity\File as EntityFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Entity\Materiel;
 

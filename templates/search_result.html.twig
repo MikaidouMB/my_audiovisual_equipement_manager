@@ -14,14 +14,11 @@
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card h-100">
                {% set imageName = product.image ? product.image.imageName : null %}
-{{dump(product.image)}}
-{% if imageName %}
-    <img class="card-img-top mx-auto w-100" src="{{ asset('uploads/'~ imageName)|imagine_filter('my_thumb_6') }}" alt="Nom de l'image" />
-{% else %}
-    <img class="card-img-top mx-auto w-50" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" />
-{% endif %}
-
-
+                {% if imageName %}
+                    <img class="card-img-top mx-auto w-100" src="{{ asset('uploads/equipements/'~ imageName)|imagine_filter('miniature') }}" alt="Nom de l'image" />  
+                {% else %}
+                    <img class="card-img-top mx-auto w-50" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Image par défaut" />
+                {% endif %}
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ product.nom }}</h5>
                         <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn btn-primary mb-auto">Voir détails</a>

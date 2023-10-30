@@ -1,17 +1,10 @@
 liip_imagine:
-    resolvers:
-        my_default_resolver:  # Renommez "default" en "my_default_resolver" ou tout autre nom unique
-            web_path: 
-                web_root: "%kernel.project_dir%/public"
-                cache_prefix: "media/cache"
-    loaders:
-        my_default_loader:  # Renommez "default" en "my_default_loader" ou tout autre nom unique
-            filesystem:
-                data_root: "%kernel.project_dir%/public/uploads/images"
+    driver: "gd"  # Le choix du pilote (gd, gmagick, imagick)
+
     filter_sets:
-        cache: ~
-        my_thumb_6:
-            quality: 100
+        miniature:
+            quality: 75
             filters:
-                thumbnail: { size: [450, 200], mode: inset }
-                background: { size: [304, 204], position: center, color: '#000000' }
+                thumbnail:
+                    size: [400, 250]
+                    mode: inset

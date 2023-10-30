@@ -42,7 +42,7 @@
         <div class="col-md-3 mb-4 d-flex align-items-stretch">
             <div class="card h-100">
             {% if equipment.image|length > 0 %}
-                <img class="card-img-top mx-auto w-50" src="{{ asset('img/'~ equipment.image.imageName) }}" alt="...">
+                <img class="card-img-top mx-auto w-50" src="{{ asset('uploads/equipements/'~ equipment.image.imageName) }}" alt="...">
             {% else %}
                 <img class="card-img-top mx-auto w-50" src="URL_d'une_image_par_défaut" alt="...">
             {% endif %}
@@ -61,16 +61,16 @@
     <h2 class="text-center mt-5 mb-5">Ils louent du matériel sur Vistason</h2>
     <div class="row mb-4 text-center">
         <div class="col">
-            <img class="card-img-top mx-auto w-50" src="{{asset('img/535-5357941_logo-tf1-png-4-png-image-rh-pngimage.png')}}" alt="TF1 Logo">
+            <img class="card-img-top mx-auto w-50" src="{{asset('uploads/equipements/535-5357941_logo-tf1-png-4-png-image-rh-pngimage.png')}}" alt="TF1 Logo">
         </div>
         <div class="col">
-            <img class="card-img-top mx-auto w-50" src="{{asset('img/CanalPlus.svg.png')}}" alt="Canal Plus Logo">
+            <img class="card-img-top mx-auto w-50" src="{{asset('uploads/equipements/CanalPlus.svg.png')}}" alt="Canal Plus Logo">
         </div>
         <div class="col">
-            <img class="card-img-top mx-auto w-50" src="{{asset('img/téléchargement.png')}}" alt="RMC Logo">
+            <img class="card-img-top mx-auto w-50" src="{{asset('uploads/equipements/téléchargement.png')}}" alt="RMC Logo">
         </div>
         <div class="col">
-            <img class="card-img-top mx-auto w-50" src="{{asset('img/logo-m6.png')}}" alt="M6 Logo">
+            <img class="card-img-top mx-auto w-50" src="{{asset('uploads/equipements/logo-m6.png')}}" alt="M6 Logo">
         </div>  
     </div>
 </div>
